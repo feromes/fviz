@@ -1,17 +1,23 @@
-import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
+import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 
-const sidebars: SidebarsConfig = {
+const sidebars = {
   tutorialSidebar: [
-    'intro',
+    {
+      type: 'doc',
+      id: 'intro',
+      label: 'Introdução',
+    },
+
     {
       type: 'category',
-      label: 'ADRs',
+      label: 'Architecture Decision Records',
       collapsed: false,
       items: [
-        'docs/adr/ADR-0001-formato-de-carregamento',
+        'adrs/ADR-0001-formato-de-carregamento',
       ],
     },
   ],
 };
+
 
 export default sidebars;

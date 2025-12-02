@@ -9,6 +9,33 @@ const config = {
   baseUrl: '/fviz/',
   favicon: 'img/favicon.ico',
 
+  themeConfig: {
+    navbar: {
+      title: 'FViz',
+      logo: {
+        alt: 'FViz Logo',
+        src: 'img/logo.svg',
+      },
+      items: [
+        {
+          to: '/',
+          label: '@fviz',
+          position: 'left',
+        },
+        {
+          to: '/intro',
+          label: 'Docs',
+          position: 'left',
+        },
+        {
+          href: 'https://github.com/feromes/fviz',
+          label: 'GitHub',
+          position: 'right',
+        },
+      ],
+    },
+  },
+
   organizationName: 'feromes', // GitHub user/org
   projectName: 'fviz',         // Repo name
 
@@ -38,3 +65,4 @@ const config = {
 };
 
 module.exports = config;
+
