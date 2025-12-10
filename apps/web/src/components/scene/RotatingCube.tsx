@@ -9,8 +9,8 @@ const RotatingCube: React.FC = () => {
   // animação por frame
   useFrame((_, delta) => {
     if (!meshRef.current) return;
-    meshRef.current.rotation.x += delta * 0.6;
-    meshRef.current.rotation.y += delta * 0.8;
+    meshRef.current.rotation.x += delta * 0.2;
+    meshRef.current.rotation.y += delta * 0.2;
   });
 
   return (
