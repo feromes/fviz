@@ -1,38 +1,21 @@
-import { useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
-import RotatingCube from "./components/scene/RotatingCube";
-import { SearchBox } from "./components/ui/SearchBox";
-
-import { loadFavelas } from "./loaders/loadFavelas";
-import { useFvizStore } from "./state/store";
+import saoRemoMeta from "./data/sao_remo.json";
+import { PointCloud } from "./components/scene/PointCloud";
+import { OrbitControls } from "@react-three/drei";
 
 export default function App() {
-  const favelas = useFvizStore((s) => s.favelas);
-  const setFavelas = useFvizStore((s) => s.setFavelas);
-  const setFavelaSelecionada = useFvizStore((s) => s.setFavelaSelecionada);
-
-  useEffect(() => {
-    loadFavelas().then((data) => {
-      setFavelas(data);
-    });
-  }, []);
-
   return (
-    <div className="w-screen h-screen relative">
-
-      <SearchBox
-        items={favelas.map((f) => f.nome)}
-        onSelect={(nome) => {
-          const f = favelas.find((x) => x.nome === nome);
-          if (f) setFavelaSelecionada(f);
-        }}
-        placeholder="Buscar favela…"
+    <Canvas camera={{ 
+              position: [0,0,1000/0.125],
+              near: 1,
+              far: 5000/0.125 
+            }}> 
+      <ambientLight />
+      <OrbitControls makeDefault />
+      <PointCloud 
+        url="/data/sao_remo_2017.arrow"
+        meta={saoRemoMeta}
       />
-
-      <Canvas camera={{ position: [3, 3, 3] }}>
-        <ambientLight />
-        <RotatingCube />
-      </Canvas>
-    </div>
+    </Canvas>
   );
 }

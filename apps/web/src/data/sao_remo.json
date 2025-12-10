@@ -1,0 +1,37 @@
+{
+  "id": "sao_remo",
+  "nome": "São Remo",
+  "nome_secundario": "-",
+  "area_m2": 82629.24619930894,
+  "centroide": [
+    321955.11520631047,
+    7393153.4935819665
+  ],
+  "icone": "favela_nome.svg",
+  "cor": "#FF5733",
+  "data_geracao": "2025-12-10",
+  "bb_normalizado": [
+    0,
+    8651,
+    0,
+    9364,
+    0,
+    759
+  ],
+  "resolucao": 12.5,
+  "offset": [
+    0,
+    0,
+    0
+  ],
+  "src": "EPSG:31983",
+  "point_count": 28142130,
+  "atributos": [
+    "x",
+    "y",
+    "z",
+    "classification",
+    "flaz_colormap"
+  ],
+  "versao_flaz": "0.1.0"
+}
