@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useThree } from "@react-three/fiber";
 import { loadArrow } from "../../loaders/loadArrow";
 import { parseArrowPoints } from "../../loaders/parseArrowPoints";
+import FitCameraToPoints from "./FitCameraToPoints";
 
 export function PointCloud({ url, meta }) {
   const { camera } = useThree();
@@ -13,19 +14,15 @@ export function PointCloud({ url, meta }) {
       const { geometry, center } = parseArrowPoints(table, meta);
 
       // Auto-fit básico
-      const [xmin, xmax, ymin, ymax, zmin, zmax] = meta.bb_normalizado;
-      const maxDim = Math.max(xmax - xmin, ymax - ymin, zmax - zmin);
-      const dist = maxDim * 1.5;
+      // const [xmin, xmax, ymin, ymax, zmin, zmax] = meta.bb_normalizado;
+      // const maxDim = Math.max(xmax - xmin, ymax - ymin, zmax - zmin);
+      // const dist = maxDim * 1.5;
 
     //   camera.position.set(0, 0, dist);
     //   camera.lookAt(0, 0, 0);
 
-      camera.position.set(0, 1000, 1500/0.125);
-      camera.lookAt(0, 0, 0);
-
-
-      console.log("GEOMETRIA CHEGOU, verts:", geometry.attributes.position.count);
-      console.log("BB:", geometry.boundingBox);
+      // camera.position.set(0, 0, 0);
+      // camera.lookAt(0, 0, 0);
 
       setGeometry(geometry);
     }
@@ -38,6 +35,7 @@ export function PointCloud({ url, meta }) {
   return (
     <points geometry={geometry}>
       <pointsMaterial size={0.02} color="white" />
+      <FitCameraToPoints pointsGeometry={geometry} />
     </points>
   );
 }
