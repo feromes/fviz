@@ -34,8 +34,15 @@ export function PointCloud({ url, meta }) {
 
   return (
     <points geometry={geometry}>
-      <pointsMaterial size={0.02} color="white" />
+      <pointsMaterial 
+        size={3} 
+        vertexColors
+        transparent={true}
+        opacity={0.5} 
+      />
       <FitCameraToPoints pointsGeometry={geometry} />
     </points>
+
+
   );
 }
