@@ -6,6 +6,7 @@ import * as THREE from "three";
 import saoRemoMeta from "./data/sao_remo.json";
 import { PointCloud } from "./components/scene/PointCloud";
 import BottomDock from "./components/ui/BottomDock";
+import TopBar from "./components/ui/TopBar";
 
 function SceneTurnTable({
   enabled,
@@ -77,12 +78,18 @@ export default function App() {
   return (
     <div className="h-screen w-screen">
       <div className="h-[calc(100vh-64px)] w-full">
+        <TopBar 
+          className="relative z-20"
+        />
         <Canvas
           camera={{
             position: [0, 0, 1000 / 0.125],
             near: 1,
             far: 5000 / 0.125,
           }}
+          className="absolute inset-0"
+          eventSource={document.getElementById("root")}
+          eventPrefix="client"
         >
           <ambientLight />
 
@@ -99,6 +106,7 @@ export default function App() {
         onTurnTable={handleTurnTable}
         onReset3D={handleReset3D}
         onTopView={handleTopView}
+        className="relative z-20"
       />
     </div>
   );
