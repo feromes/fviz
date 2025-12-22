@@ -1,18 +1,38 @@
 import Reset3DIcon from "../../assets/icons/Reset3D.svg";
 import TopViewIcon from "../../assets/icons/TopView.svg";
+import TurnTableIcon from "../../assets/icons/TurnTable.svg";
 
 type BottomDockProps = {
+  onTurnTable?: () => void; // ainda não usado
   onReset3D?: () => void;
-  onTopView?: () => void; // ainda não usado
+  onTopView?: () => void;   // ainda não usado
 };
 
 export default function BottomDock({
+  onTurnTable,
   onReset3D,
   onTopView,
 }: BottomDockProps) {
   return (
     <footer className="h-16 w-full bg-[#EDEDED] flex items-center justify-center">
       <div className="flex items-center gap-2">
+        {/* TurnTable */}
+        <button
+          type="button"
+          onClick={onTurnTable}
+          aria-label="Ativar rotação automática (TurnTable)"
+          className="
+            h-10 w-10
+            flex items-center justify-center
+            rounded-xl
+            hover:bg-black/10
+            active:scale-95
+            transition
+          "
+        >
+          <img src={TurnTableIcon} alt="" className="h-6 w-6" />
+        </button>
+
         {/* Reset 3D */}
         <button
           type="button"
