@@ -8,6 +8,9 @@ import { PointCloud } from "./components/scene/PointCloud";
 import BottomDock from "./components/ui/BottomDock";
 import TopBar from "./components/ui/TopBar";
 
+import SideDrawer, { DRAWER_WIDTH } from "./components/layout/SideDrawer";
+import { useUIStore } from "./state/uiStore";
+
 function SceneTurnTable({
   enabled,
   speed = 0.6,
@@ -34,6 +37,7 @@ function SceneTurnTable({
 export default function App() {
   const controlsRef = useRef<any>(null);
   const sceneRef = useRef<THREE.Group>(null);
+  const isMenuOpen = useUIStore((s) => s.isMenuOpen);
 
   const [turnTable, setTurnTable] = useState(false);
 
@@ -76,38 +80,54 @@ export default function App() {
   }
 
   return (
-    <div className="h-screen w-screen">
-      <div className="h-[calc(100vh-64px)] w-full">
+    <div className="relative w-screen h-screen overflow-hidden">
+      <SideDrawer />
+
+      <div 
+        className="
+          h-full w-full
+          flex flex-col
+          transition-transform duration-300 ease-in-out
+        "
+        style={{
+          transform: isMenuOpen
+            ? `translateX(${DRAWER_WIDTH}px)`
+            : "translateX(0)",
+        }}
+      >
+
         <TopBar 
           className="relative z-20"
         />
-        <Canvas
-          camera={{
-            position: [0, 0, 1000 / 0.125],
-            near: 1,
-            far: 5000 / 0.125,
-          }}
-          className="absolute inset-0"
-          eventSource={document.getElementById("root")}
-          eventPrefix="client"
-        >
-          <ambientLight />
 
-          {/* 🔑 precisa do ref para Reset3D e TopView */}
-          <OrbitControls ref={controlsRef} makeDefault />
+        {/* CENA */}
+        <div className="relative flex-1">
 
-          <SceneTurnTable enabled={turnTable} speed={0.6} sceneRef={sceneRef}>
-            <PointCloud url="/data/sao_remo_2017.arrow" meta={saoRemoMeta} />
-          </SceneTurnTable>
-        </Canvas>
+          <Canvas
+            camera={{
+              position: [0, 0, 1000 / 0.125],
+              near: 1,
+              far: 5000 / 0.125,
+            }}
+            className="w-full h-full"
+          >
+            <ambientLight />
+            <OrbitControls ref={controlsRef} makeDefault />
+
+            <SceneTurnTable enabled={turnTable} sceneRef={sceneRef}>
+              <PointCloud url="/data/sao_remo_2017.arrow" meta={saoRemoMeta} />
+            </SceneTurnTable>
+          </Canvas>
+        </div>
+
+        <BottomDock
+          onTurnTable={handleTurnTable}
+          onReset3D={handleReset3D}
+          onTopView={handleTopView}
+          className="z-20 shrink-0"
+        />
+
       </div>
-
-      <BottomDock
-        onTurnTable={handleTurnTable}
-        onReset3D={handleReset3D}
-        onTopView={handleTopView}
-        className="relative z-20"
-      />
     </div>
   );
 }
