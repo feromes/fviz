@@ -1,14 +1,20 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
+import { useRef } from "react";
 
 import saoRemoMeta from "./data/sao_remo.json";
 import { PointCloud } from "./components/scene/PointCloud";
 import BottomDock from "./components/ui/BottomDock";
 
 export default function App() {
+  const controlsRef = useRef<any>(null);
+
+  function handleReset3D() {
+    controlsRef.current?.reset();
+  }
+
   return (
     <div className="h-screen w-screen">
-      {/* Área do Canvas: altura total menos 64px do rodapé */}
       <div className="h-[calc(100vh-64px)] w-full">
         <Canvas
           camera={{
@@ -18,13 +24,15 @@ export default function App() {
           }}
         >
           <ambientLight />
-          <OrbitControls makeDefault />
-          <PointCloud url="/data/sao_remo_2017.arrow" meta={saoRemoMeta} />
+          <OrbitControls ref={controlsRef} makeDefault />
+          <PointCloud
+            url="/data/sao_remo_2017.arrow"
+            meta={saoRemoMeta}
+          />
         </Canvas>
       </div>
 
-      {/* Dock inferior */}
-      <BottomDock />
+      <BottomDock onReset3D={handleReset3D} />
     </div>
   );
 }

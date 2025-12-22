@@ -7,9 +7,12 @@ function FitCameraToPoints({ pointsGeometry }) {
 
   useEffect(() => {
     if (!pointsGeometry) return;
+    if (!controls) return;
 
     // 1) Calcula o bounding box
-    const bb = new Box3().setFromBufferAttribute(pointsGeometry.getAttribute('position'));
+    const bb = new Box3().setFromBufferAttribute(
+      pointsGeometry.getAttribute('position')
+    );
 
     const center = new Vector3();
     const sizeBB = new Vector3();
@@ -17,24 +20,32 @@ function FitCameraToPoints({ pointsGeometry }) {
     bb.getSize(sizeBB);
 
     // 2) Define o target do OrbitControls
-    if (controls) controls.target.copy(center);
+    controls.target.copy(center);
 
-    // 3) Distância ideal sem animação
+    // 3) Distância ideal
     const maxDim = Math.max(sizeBB.x, sizeBB.y, sizeBB.z);
-    const distance = maxDim * 1.6; // ajustável: 1.6 é perfeito
+    const distance = maxDim * 1.6;
 
-    // 4) Coloca a câmera numa posição padrão (azimute 45°, elevação 45°)
-    camera.position.set(0,distance * -0.707,distance * .707);
+    // 4) Posição padrão da câmera (45° / 45°)
+    camera.position.set(
+      0,
+      distance * -0.707,
+      distance * 0.707
+    );
 
-
-    // 5) FOV fixo
+    // 5) Parâmetros de câmera
     camera.fov = 55;
     camera.near = distance * 0.001;
     camera.far = distance * 10;
-
     camera.updateProjectionMatrix();
 
-    if (controls) controls.update();
+    // 6) Atualiza controles
+    controls.update();
+
+    // 🔑 🔑 🔑 LINHA CRÍTICA 🔑 🔑 🔑
+    // Diz ao OrbitControls que ESTE é o estado inicial correto
+    controls.saveState();
+
   }, [pointsGeometry, camera, controls, size]);
 
   return null;

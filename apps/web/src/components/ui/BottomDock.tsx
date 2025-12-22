@@ -1,10 +1,15 @@
 import Reset3DIcon from "../../assets/icons/Reset3D.svg";
 
-export default function BottomDock() {
+type BottomDockProps = {
+  onReset3D?: () => void;
+};
+
+export default function BottomDock({ onReset3D }: BottomDockProps) {
   return (
     <footer className="h-16 w-full bg-[#EDEDED] flex items-center justify-center">
       <button
         type="button"
+        onClick={onReset3D}
         aria-label="Resetar visualização 3D"
         className="
           h-10 w-10
@@ -15,11 +20,7 @@ export default function BottomDock() {
           transition
         "
       >
-        <img
-          src={Reset3DIcon}
-          alt=""
-          className="h-8 w-8"
-        />
+        <img src={Reset3DIcon} alt="" className="h-6 w-6" />
       </button>
     </footer>
   );
