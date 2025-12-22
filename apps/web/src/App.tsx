@@ -13,6 +13,29 @@ export default function App() {
     controlsRef.current?.reset();
   }
 
+  function handleTopView() {
+    const controls = controlsRef.current;
+    if (!controls) return;
+
+    const camera = controls.object; // câmera usada pelos controls
+    const target = controls.target.clone();
+
+    // distância atual câmera → target
+    const distance = camera.position.distanceTo(target);
+
+    // TopView: câmera “em cima” do target
+    camera.position.set(
+      target.x,
+      target.y,
+      target.z + distance
+    );
+
+    camera.up.set(0, 1, 0); // garante orientação correta
+    camera.lookAt(target);
+
+    controls.update();
+  }
+
   return (
     <div className="h-screen w-screen">
       <div className="h-[calc(100vh-64px)] w-full">
@@ -32,7 +55,10 @@ export default function App() {
         </Canvas>
       </div>
 
-      <BottomDock onReset3D={handleReset3D} />
+      <BottomDock
+        onReset3D={handleReset3D}
+        onTopView={handleTopView}
+      />
     </div>
   );
 }
