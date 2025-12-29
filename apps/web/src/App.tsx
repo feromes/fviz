@@ -1,6 +1,8 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useFavelaStore } from "./state/favelaStore";
+import { useFavela } from "./hooks/useFavela";
 import * as THREE from "three";
 
 import saoRemoMeta from "./data/sao_remo.json";
@@ -40,6 +42,30 @@ export default function App() {
   const isMenuOpen = useUIStore((s) => s.isMenuOpen);
 
   const [turnTable, setTurnTable] = useState(false);
+
+  const loadFavelas = useFavelaStore(s => s.loadFavelas);
+
+  useEffect(() => {
+    loadFavelas();
+  }, []);
+
+  const favela = useFavela();
+
+  useEffect(() => {
+    if (favela) {
+      console.log("📦 Favela derivada:", favela);
+    }
+  }, [favela]);
+
+  const pointCloudUrl = favela
+    ? `/api/favela/${favela.id}/periodos/2017/flaz.arrow`
+    : null;
+
+  useEffect(() => {
+    if (pointCloudUrl) {
+      console.log("☁️ PointCloud URL:", pointCloudUrl);
+    }
+  }, [pointCloudUrl]);
 
   function resetSceneRotation() {
     if (!sceneRef.current) return;
@@ -115,8 +141,14 @@ export default function App() {
             <OrbitControls ref={controlsRef} makeDefault />
 
             <SceneTurnTable enabled={turnTable} sceneRef={sceneRef}>
-              <PointCloud url="/data/sao_remo_2017.arrow" meta={saoRemoMeta} />
+              {pointCloudUrl && (
+                <PointCloud
+                  url={pointCloudUrl}
+                  meta={saoRemoMeta} // ainda fixo, tudo bem por enquanto
+                />
+              )}
             </SceneTurnTable>
+
           </Canvas>
         </div>
 
