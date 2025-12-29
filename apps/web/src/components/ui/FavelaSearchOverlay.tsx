@@ -3,14 +3,25 @@ import FavelaCard from "./FavelaCard";
 
 type FavelaSearchOverlayProps = {
   open: boolean;
+  searchQuery: string;
   onClose: () => void;
 };
 
+
 export default function FavelaSearchOverlay({
   open,
+  searchQuery,
   onClose,
 }: FavelaSearchOverlayProps) {
   const favelas = useFavelaStore((s) => s.favelas);
+
+  const query = searchQuery.trim().toLowerCase();
+
+  const filtered = query
+    ? favelas.filter((f) =>
+        f.nome.toLowerCase().includes(query)
+        )
+    : favelas;
 
   if (!open) return null;
 
@@ -29,8 +40,8 @@ export default function FavelaSearchOverlay({
     >
       {/* Área scrollável */}
       <div className="h-full overflow-y-auto px-4 py-4 space-y-3">
-        {favelas.map((favela) => (
-          <FavelaCard key={favela.id} favela={favela} />
+        {filtered.map((favela) => (
+        <FavelaCard key={favela.id} favela={favela} />
         ))}
       </div>
     </div>

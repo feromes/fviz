@@ -70,6 +70,7 @@ export default function App() {
   }, [pointCloudUrl]);
 
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   function resetSceneRotation() {
     if (!sceneRef.current) return;
@@ -130,13 +131,15 @@ export default function App() {
           className="relative z-20"
           searchOpen={searchOpen}
           setSearchOpen={setSearchOpen}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
         />
 
         <FavelaSearchOverlay
           open={searchOpen}
+          searchQuery={searchQuery}
           onClose={() => setSearchOpen(false)}
         />
-
 
         {/* CENA */}
         <div className="relative flex-1">

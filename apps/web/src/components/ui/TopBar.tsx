@@ -10,10 +10,14 @@ export default function TopBar({
   className = "",
   searchOpen,
   setSearchOpen,
+  searchQuery,
+  setSearchQuery,
 }: {
   className?: string;
   searchOpen: boolean;
   setSearchOpen: (v: boolean) => void;
+  searchQuery: string;
+  setSearchQuery: (v: string) => void;
 }) {
   const toggleMenu = useUIStore((s) => s.toggleMenu);
 
@@ -58,7 +62,9 @@ export default function TopBar({
           <input
             ref={inputRef}
             type="text"
-            placeholder="Buscar favela, distrito…"
+            placeholder="Buscar favela…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Escape") setSearchOpen(false);
             }}
