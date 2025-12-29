@@ -6,10 +6,18 @@ import SearchIcon from "../../assets/icons/Search.svg";
 
 import { useUIStore } from "../../state/uiStore";
 
-export default function TopBar({ className = "" }: { className?: string }) {
+export default function TopBar({
+  className = "",
+  searchOpen,
+  setSearchOpen,
+}: {
+  className?: string;
+  searchOpen: boolean;
+  setSearchOpen: (v: boolean) => void;
+}) {
   const toggleMenu = useUIStore((s) => s.toggleMenu);
 
-  const [searchOpen, setSearchOpen] = useState(false);
+  // const [searchOpen, setSearchOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // foco automático ao abrir

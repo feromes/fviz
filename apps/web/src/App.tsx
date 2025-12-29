@@ -3,6 +3,7 @@ import { OrbitControls } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import { useFavelaStore } from "./state/favelaStore";
 import { useFavela } from "./hooks/useFavela";
+import FavelaSearchOverlay from "./components/ui/FavelaSearchOverlay";
 import * as THREE from "three";
 
 import saoRemoMeta from "./data/sao_remo.json";
@@ -68,6 +69,8 @@ export default function App() {
     }
   }, [pointCloudUrl]);
 
+  const [searchOpen, setSearchOpen] = useState(false);
+
   function resetSceneRotation() {
     if (!sceneRef.current) return;
     sceneRef.current.rotation.set(0, 0, 0);
@@ -123,9 +126,17 @@ export default function App() {
         }}
       >
 
-        <TopBar 
+        <TopBar
           className="relative z-20"
+          searchOpen={searchOpen}
+          setSearchOpen={setSearchOpen}
         />
+
+        <FavelaSearchOverlay
+          open={searchOpen}
+          onClose={() => setSearchOpen(false)}
+        />
+
 
         {/* CENA */}
         <div className="relative flex-1">
