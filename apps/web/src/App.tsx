@@ -12,6 +12,7 @@ import TopBar from "./components/ui/TopBar";
 
 import SideDrawer, { DRAWER_WIDTH } from "./components/layout/SideDrawer";
 import { useUIStore } from "./state/uiStore";
+import FavelaCard from "./components/ui/FavelaCard";
 
 function SceneTurnTable({
   enabled,
@@ -128,6 +129,20 @@ export default function App() {
 
         {/* CENA */}
         <div className="relative flex-1">
+
+          {/* CARD FIXO DA FAVELA */}
+          {favela && (
+            <div
+              className="absolute z-30"
+              style={{
+                top: 16,      // abaixo da TopBar
+                left: 16,
+                right: 16,
+              }}
+            >
+              <FavelaCard favela={favela} />
+            </div>
+          )}
 
           <Canvas
             camera={{
