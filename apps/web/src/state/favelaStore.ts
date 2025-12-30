@@ -13,7 +13,15 @@ export type FavelaResumo = {
   centroid: [number, number];
 
   periodos: number[];
+
+  // 🔽 NOVOS CAMPOS (vindos do favelas.json)
+  bb_normalizado: [number, number, number, number, number, number];
+  resolucao: number;
+  offset: [number, number, number];
+
+  point_count: number;
 };
+
 
 type FavelaState = {
   // dados

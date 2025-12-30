@@ -173,7 +173,7 @@ export default function App() {
               {pointCloudUrl && (
                 <PointCloud
                   url={pointCloudUrl}
-                  meta={saoRemoMeta} // ainda fixo, tudo bem por enquanto
+                  meta={favela} // ainda fixo, tudo bem por enquanto
                 />
               )}
             </SceneTurnTable>
