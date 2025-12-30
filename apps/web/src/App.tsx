@@ -6,7 +6,6 @@ import { useFavela } from "./hooks/useFavela";
 import FavelaSearchOverlay from "./components/ui/FavelaSearchOverlay";
 import * as THREE from "three";
 
-import saoRemoMeta from "./data/sao_remo.json";
 import { PointCloud } from "./components/scene/PointCloud";
 import BottomDock from "./components/ui/BottomDock";
 import TopBar from "./components/ui/TopBar";

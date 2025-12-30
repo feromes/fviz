@@ -2,16 +2,22 @@ import type { FavelaResumo } from "../../state/favelaStore";
 
 type FavelaCardProps = {
   favela: FavelaResumo;
+  onClick?: () => void;
 };
 
-export default function FavelaCard({ favela }: FavelaCardProps) {
+export default function FavelaCard({ favela, onClick }: FavelaCardProps) {
   return (
     <div
+      onClick={onClick}
       className="
         flex items-center gap-3
         px-3
         bg-white
         shadow-sm
+        cursor-pointer
+        hover:bg-neutral-100
+        rounded-lg
+        transition
       "
       style={{
         height: 64,
