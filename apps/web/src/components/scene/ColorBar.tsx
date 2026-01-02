@@ -36,7 +36,8 @@ export default function ColorBar() {
     }
 
     ctx.putImageData(img, 0, 0);
-  }, []);
+}, [visible, min, max]);
+
 
   if (!visible) return null;
 

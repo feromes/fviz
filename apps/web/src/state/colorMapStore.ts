@@ -9,6 +9,7 @@ type ColorMapState = {
   ref: string;
   colormap: "fviz_geo"; // por enquanto fixo
   visible: boolean;
+  toggleVisible: () => void;
   setColorMap: (data: Partial<ColorMapState>) => void;
 };
 
@@ -19,7 +20,8 @@ export const useColorMapStore = create<ColorMapState>((set) => ({
   ref: "",
   colormap: "fviz_geo",
   visible: true,
-
+  toggleVisible: () =>
+      set((s) => ({ visible: !s.visible })),
   setColorMap: (data) =>
     set((state) => ({
       ...state,
