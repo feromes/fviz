@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useColorMapStore } from "../../state/colorMapStore";
-import { fvizGeoColor } from "../../utils/colormaps"; // já falo disso abaixo
+import { flazColor } from "../../utils/flazColor";
+
 
 export default function ColorBar() {
   const { min, max, ref, visible } = useColorMapStore();
@@ -23,14 +24,14 @@ export default function ColorBar() {
 
     for (let y = 0; y < height; y++) {
       const t = 1 - y / (height - 1); // topo = max
-      const [r, g, b] = fvizGeoColor(t);
+      const [r, g, b] = flazColor(t);
 
       for (let x = 0; x < width; x++) {
         const i = (y * width + x) * 4;
-        img.data[i] = r;
-        img.data[i + 1] = g;
-        img.data[i + 2] = b;
-        img.data[i + 3] = 255;
+        img.data[i]     = Math.round(r * 255);
+        img.data[i + 1] = Math.round(g * 255);
+        img.data[i + 2] = Math.round(b * 255);
+        img.data[i + 3] = 127;
       }
     }
 
@@ -49,7 +50,7 @@ export default function ColorBar() {
       className="absolute right-4 bottom-20 z-20 pointer-events-none select-none"
     >
       <div className="text-[11px] text-neutral-700 mb-1">
-        Elevação (m — {ref})
+        Elevação (m)
       </div>
 
       <div className="flex gap-2">
