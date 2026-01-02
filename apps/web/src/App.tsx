@@ -13,6 +13,7 @@ import TopBar from "./components/ui/TopBar";
 import SideDrawer, { DRAWER_WIDTH } from "./components/layout/SideDrawer";
 import { useUIStore } from "./state/uiStore";
 import FavelaCard from "./components/ui/FavelaCard";
+import ColorBar from "./components/scene/ColorBar";
 
 function SceneTurnTable({
   enabled,
@@ -178,6 +179,8 @@ export default function App() {
             </SceneTurnTable>
 
           </Canvas>
+
+          <ColorBar />
         </div>
 
         <BottomDock
