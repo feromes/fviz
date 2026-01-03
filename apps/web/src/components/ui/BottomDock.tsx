@@ -1,26 +1,48 @@
 import Reset3DIcon from "../../assets/icons/Reset3D.svg";
 import TopViewIcon from "../../assets/icons/TopView.svg";
 import TurnTableIcon from "../../assets/icons/TurnTable.svg";
-import { useColorMapStore } from "../../state/colorMapStore";
+import VizinhancaIcon from "../../assets/icons/Vizinhanca.svg";
 import LegendaIcon from "../../assets/icons/Legenda.svg";
 
+import { useColorMapStore } from "../../state/colorMapStore";
+
 type BottomDockProps = {
-  onTurnTable?: () => void; // ainda não usado
+  onTurnTable?: () => void;
   onReset3D?: () => void;
-  onTopView?: () => void;   // ainda não usado
+  onTopView?: () => void;
+
+  onNeighborSearch?: () => void; // 🔽 NOVO
 };
 
 export default function BottomDock({
   onTurnTable,
   onReset3D,
   onTopView,
+  onNeighborSearch,
 }: BottomDockProps) {
-
   const { visible, toggleVisible } = useColorMapStore();
 
   return (
     <footer className="h-16 w-full bg-[#EDEDED] flex items-center justify-center">
       <div className="flex items-center gap-2">
+
+        {/* Vizinhança */}
+        <button
+          type="button"
+          onClick={onNeighborSearch}
+          aria-label="Buscar favelas por vizinhança"
+          className="
+            h-10 w-10
+            flex items-center justify-center
+            rounded-xl
+            hover:bg-black/10
+            active:scale-95
+            transition
+          "
+        >
+          <img src={VizinhancaIcon} alt="" className="h-6 w-6" />
+        </button>
+
         {/* TurnTable */}
         <button
           type="button"
