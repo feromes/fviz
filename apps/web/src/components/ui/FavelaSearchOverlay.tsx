@@ -4,15 +4,16 @@ import FavelaCard from "./FavelaCard";
 type FavelaSearchOverlayProps = {
   open: boolean;
   searchQuery: string;
+  searchMode: SearchMode;
   onClose: () => void;
 };
 
-type SearchMode = "name"; // por enquanto só isso
-const DEFAULT_SEARCH_MODE: SearchMode = "name";
+type SearchMode = "name" | "neighbor";
 
 export default function FavelaSearchOverlay({
   open,
   searchQuery,
+  searchMode,
   onClose,
 }: FavelaSearchOverlayProps) {
   const favelas = useFavelaStore((s) => s.favelas);
@@ -20,7 +21,7 @@ export default function FavelaSearchOverlay({
   const favelaAtiva = useFavelaStore((s) => s.favelaAtiva);
 
   const query = searchQuery.trim().toLowerCase();
-  const searchMode = DEFAULT_SEARCH_MODE;
+  // const searchMode = DEFAULT_SEARCH_MODE;
 
   // 🔽 filtro continua exatamente como já estava
   const filtered = query

@@ -71,6 +71,7 @@ export default function App() {
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchMode, setSearchMode] = useState<"name" | "neighbor">("name");
 
   function resetSceneRotation() {
     if (!sceneRef.current) return;
@@ -138,6 +139,7 @@ export default function App() {
         <FavelaSearchOverlay
           open={searchOpen}
           searchQuery={searchQuery}
+          searchMode={searchMode} 
           onClose={() => setSearchOpen(false)}
         />
 
@@ -187,6 +189,11 @@ export default function App() {
           onTurnTable={handleTurnTable}
           onReset3D={handleReset3D}
           onTopView={handleTopView}
+          onNeighborSearch={() => {
+            setSearchMode("neighbor");
+            setSearchQuery("");      // opcional, mas bom
+            setSearchOpen(true);     // 🔥 AQUI abre o overlay
+          }}
           className="z-20 shrink-0"
         />
 
