@@ -30,13 +30,33 @@ export default function FavelaSearchOverlay({
       )
     : favelas;
 
-  // 🔽 NOVO: ordenação explícita por modo
+  function distance2D(
+    a: [number, number],
+    b: [number, number]
+  ): number {
+    const dx = a[0] - b[0];
+    const dy = a[1] - b[1];
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
   const ordered = (() => {
     if (searchMode === "name") {
       return [...filtered].sort((a, b) =>
         a.nome.localeCompare(b.nome, "pt-BR", { sensitivity: "base" })
       );
     }
+
+    if (searchMode === "neighbor" && favelaAtiva?.centroid) {
+      const ref = favelaAtiva.centroid;
+
+      return [...filtered]
+        .filter((f) => f.centroid) // segurança extra
+        .sort((a, b) =>
+          distance2D(a.centroid, ref) -
+          distance2D(b.centroid, ref)
+        );
+    }
+
     return filtered;
   })();
 
@@ -57,17 +77,35 @@ export default function FavelaSearchOverlay({
     >
       {/* Área scrollável */}
       <div className="h-full overflow-y-auto px-4 py-4 space-y-3">
-        {ordered.map((favela) => (
-          <FavelaCard
-            key={favela.id}
-            favela={favela}
-            active={favela.id === favelaAtiva?.id}
-            onClick={() => {
-              selectFavela(favela.id);
-              onClose();
-            }}
-          />
-        ))}
+        {ordered.map((favela) => {
+          const isNeighborMode =
+            searchMode === "neighbor" &&
+            favelaAtiva?.centroid &&
+            favela.centroid;
+
+          return (
+            <FavelaCard
+              key={favela.id}
+              favela={favela}
+              active={favela.id === favelaAtiva?.id}
+              // 🔽 só passa distância/ref quando for vizinhança
+              distanceM={
+                isNeighborMode
+                  ? distance2D(favela.centroid, favelaAtiva.centroid)
+                  : undefined
+              }
+              distanceRef={
+                isNeighborMode
+                  ? { type: "favela", nome: favelaAtiva.nome }
+                  : undefined
+              }
+              onClick={() => {
+                selectFavela(favela.id);
+                onClose();
+              }}
+            />
+          );
+        })}
       </div>
     </div>
   );
