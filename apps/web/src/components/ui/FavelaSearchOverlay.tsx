@@ -7,6 +7,8 @@ type FavelaSearchOverlayProps = {
   onClose: () => void;
 };
 
+type SearchMode = "name"; // por enquanto só isso
+const DEFAULT_SEARCH_MODE: SearchMode = "name";
 
 export default function FavelaSearchOverlay({
   open,
@@ -15,16 +17,27 @@ export default function FavelaSearchOverlay({
 }: FavelaSearchOverlayProps) {
   const favelas = useFavelaStore((s) => s.favelas);
   const selectFavela = useFavelaStore((s) => s.selectFavela);
+  const favelaAtiva = useFavelaStore((s) => s.favelaAtiva);
+
   const query = searchQuery.trim().toLowerCase();
+  const searchMode = DEFAULT_SEARCH_MODE;
 
-  const favelaAtiva = useFavelaStore(s => s.favelaAtiva);
-
-
+  // 🔽 filtro continua exatamente como já estava
   const filtered = query
     ? favelas.filter((f) =>
         f.nome.toLowerCase().includes(query)
-        )
+      )
     : favelas;
+
+  // 🔽 NOVO: ordenação explícita por modo
+  const ordered = (() => {
+    if (searchMode === "name") {
+      return [...filtered].sort((a, b) =>
+        a.nome.localeCompare(b.nome, "pt-BR", { sensitivity: "base" })
+      );
+    }
+    return filtered;
+  })();
 
   if (!open) return null;
 
@@ -37,13 +50,13 @@ export default function FavelaSearchOverlay({
         backdrop-blur
       "
       style={{
-        top: 56,        // logo abaixo da TopBar (h-14)
+        top: 56, // logo abaixo da TopBar (h-14)
         bottom: 0,
       }}
     >
       {/* Área scrollável */}
       <div className="h-full overflow-y-auto px-4 py-4 space-y-3">
-        {filtered.map((favela) => (
+        {ordered.map((favela) => (
           <FavelaCard
             key={favela.id}
             favela={favela}
