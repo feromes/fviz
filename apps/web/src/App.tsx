@@ -15,6 +15,10 @@ import { useUIStore } from "./state/uiStore";
 import FavelaCard from "./components/ui/FavelaCard";
 import ColorBar from "./components/scene/ColorBar";
 
+import { useOverlayStore } from "./state/overlayStore";
+import H3SampaLayer from "./components/scene/H3SampaLayer";
+
+
 function SceneTurnTable({
   enabled,
   speed = 0.6,
@@ -111,6 +115,8 @@ export default function App() {
     controls.update();
   }
 
+  const activeOverlay = useOverlayStore((s) => s.activeOverlay);
+
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       <SideDrawer />
@@ -179,6 +185,10 @@ export default function App() {
                 />
               )}
             </SceneTurnTable>
+
+            {activeOverlay === "sampa_h3" && (
+              <H3SampaLayer />
+            )}
 
           </Canvas>
 

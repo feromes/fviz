@@ -3,7 +3,9 @@ import TopViewIcon from "../../assets/icons/TopView.svg";
 import TurnTableIcon from "../../assets/icons/TurnTable.svg";
 import VizinhancaIcon from "../../assets/icons/Vizinhanca.svg";
 import LegendaIcon from "../../assets/icons/Legenda.svg";
+import SampaIcon from "../../assets/icons/Sampa.svg";
 
+import { useOverlayStore } from "../../state/overlayStore";
 import { useColorMapStore } from "../../state/colorMapStore";
 
 type BottomDockProps = {
@@ -21,15 +23,38 @@ export default function BottomDock({
   onNeighborSearch,
 }: BottomDockProps) {
   const { visible, toggleVisible } = useColorMapStore();
+  const setOverlay = useOverlayStore((s) => s.setOverlay);
+  const clearOverlay = useOverlayStore((s) => s.clearOverlay);
+
 
   return (
     <footer className="h-16 w-full bg-[#EDEDED] flex items-center justify-center">
       <div className="flex items-center gap-2">
 
+      {/* Sampa / Mapa H3 */}
+      <button
+        type="button"
+        onClick={() => setOverlay("sampa_h3")}
+        aria-label="Mapa H3 de São Paulo"
+        className="
+          h-10 w-10
+          flex items-center justify-center
+          rounded-xl
+          hover:bg-black/10
+          active:scale-95
+          transition
+        "
+      >
+        <img src={SampaIcon} alt="" className="h-6 w-6" />
+      </button>
+
         {/* Vizinhança */}
         <button
           type="button"
-          onClick={onNeighborSearch}
+          onClick={() => {
+            onNeighborSearch?.();
+            clearOverlay();
+          }}
           aria-label="Buscar favelas por vizinhança"
           className="
             h-10 w-10
