@@ -1,6 +1,7 @@
 import { useFavelaStore } from "../../state/favelaStore";
 import FavelaCard from "./FavelaCard";
-import { useNeighborStore } from "../../state/neighborStore";
+import { useOverlayStore } from "../../state/overlayStore";
+
 
 
 type FavelaSearchOverlayProps = {
@@ -11,7 +12,8 @@ type FavelaSearchOverlayProps = {
 };
 
 
-type SearchMode = "name" | "neighbor";
+type SearchMode = "name" | "neighbor" | "hex";
+
 
 export default function FavelaSearchOverlay({
   open,
@@ -22,8 +24,8 @@ export default function FavelaSearchOverlay({
   const favelas = useFavelaStore((s) => s.favelas);
   const selectFavela = useFavelaStore((s) => s.selectFavela);
   const favelaAtiva = useFavelaStore((s) => s.favelaAtiva);
+  const hexRef = useOverlayStore((s) => s.hexRef);
 
-  const reference = useNeighborStore((s) => s.reference);
 
   const query = (searchQuery ?? "").trim().toLowerCase();
   // const searchMode = DEFAULT_SEARCH_MODE;
@@ -62,8 +64,8 @@ export default function FavelaSearchOverlay({
         );
     }
 
-    if (searchMode === "neighbor" && reference) {
-      const ref = reference; // [lng, lat]
+    if (searchMode === "hex" && hexRef) {
+      const ref = hexRef.center; // [lng, lat]
 
       return [...filtered]
         .filter((f) => f.centroid)
@@ -100,19 +102,27 @@ export default function FavelaSearchOverlay({
             favelaAtiva?.centroid &&
             favela.centroid;
 
+          const isHexMode =
+            searchMode === "hex" &&
+            hexRef &&
+            favela.centroid;
+
           return (
             <FavelaCard
               key={favela.id}
               favela={favela}
               active={favela.id === favelaAtiva?.id}
-              // 🔽 só passa distância/ref quando for vizinhança
               distanceM={
-                isNeighborMode
+                isHexMode
+                  ? distance2D(favela.centroid, hexRef.center)
+                  : isNeighborMode
                   ? distance2D(favela.centroid, favelaAtiva.centroid)
                   : undefined
               }
               distanceRef={
-                isNeighborMode
+                isHexMode
+                  ? { type: "hex" }
+                  : isNeighborMode
                   ? { type: "favela", nome: favelaAtiva.nome }
                   : undefined
               }

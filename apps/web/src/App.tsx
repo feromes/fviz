@@ -143,13 +143,12 @@ export default function App() {
           setSearchQuery={setSearchQuery}
         />
 
-
         <FavelaSearchOverlay
-          open={overlay.startsWith("search_")}
+          open={activeOverlay.startsWith("search_")}
           searchMode={
-            overlay === "search_neighbor"
+            activeOverlay === "search_neighbor"
               ? "neighbor"
-              : overlay === "search_hex"
+              : activeOverlay === "search_hex"
               ? "hex"
               : "name"
           }

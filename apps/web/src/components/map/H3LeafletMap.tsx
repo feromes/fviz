@@ -4,7 +4,6 @@ import { cellToBoundary } from "h3-js";
 import { useOverlayStore } from "../../state/overlayStore";
 import { useNeighborStore } from "../../state/neighborStore";
 
-
 type H3Hex = {
   h3: string;
   center: [number, number]; // [lng, lat]
@@ -44,9 +43,8 @@ export default function H3LeafletMap() {
         console.log("🟢 H3 Leaflet carregado:", data.hexes.length);
       });
   }, []);
-
-  const setReference = useNeighborStore((s) => s.setReference);
-  const setOverlay = useOverlayStore((s) => s.setOverlay);
+  
+  const setHexSearch = useOverlayStore((s) => s.setHexSearch);
 
   return (
     <MapContainer
@@ -85,15 +83,10 @@ export default function H3LeafletMap() {
             }}
             eventHandlers={{
               click: () => {
-                // 1️⃣ guarda o centro do hex
-                setReference(hex.center); // [lng, lat]
-
-                // 2️⃣ abre o overlay de busca
-                setOverlay("none"); // fecha mapa, se quiser
-                setOverlay("favela_search"); // se preferir, ou controlar no App
-
-                // se você já controla isso pelo App:
-                // apenas deixe o estado preparado
+                setHexSearch({
+                  h3: hex.h3,
+                  center: hex.center, // [lng, lat]
+                });
               },
             }}
           />
