@@ -3,21 +3,21 @@ import { OrbitControls } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import "./styles/leaflet.css";
-import { useFavelaStore } from "./state/favelaStore";
-import { useFavela } from "./hooks/useFavela";
-import FavelaSearchOverlay from "./components/ui/FavelaSearchOverlay";
 import * as THREE from "three";
 
-import { PointCloud } from "./components/scene/PointCloud";
-import BottomDock from "./components/ui/BottomDock";
-import TopBar from "./components/ui/TopBar";
+import { useFavelaStore } from "./state/favelaStore";
+import { useFavela } from "./hooks/useFavela";
+import { useUIStore } from "./state/uiStore";
+import { useOverlayStore } from "./state/overlayStore";
 
 import SideDrawer, { DRAWER_WIDTH } from "./components/layout/SideDrawer";
-import { useUIStore } from "./state/uiStore";
+import TopBar from "./components/ui/TopBar";
+import BottomDock from "./components/ui/BottomDock";
 import FavelaCard from "./components/ui/FavelaCard";
-import ColorBar from "./components/scene/ColorBar";
+import FavelaSearchOverlay from "./components/ui/FavelaSearchOverlay";
 
-import { useOverlayStore } from "./state/overlayStore";
+import { PointCloud } from "./components/scene/PointCloud";
+import ColorBar from "./components/scene/ColorBar";
 import H3LeafletMap from "./components/map/H3LeafletMap";
 
 function SceneTurnTable({
@@ -35,8 +35,6 @@ function SceneTurnTable({
     if (!enabled) return;
     const g = sceneRef.current;
     if (!g) return;
-
-    // ✅ seu mundo é Z-up (você confirmou que isso "funciona")
     g.rotation.z += delta * speed;
   });
 
@@ -46,54 +44,48 @@ function SceneTurnTable({
 export default function App() {
   const controlsRef = useRef<any>(null);
   const sceneRef = useRef<THREE.Group>(null);
+
   const isMenuOpen = useUIStore((s) => s.isMenuOpen);
+  const activeOverlay = useOverlayStore((s) => s.activeOverlay);
+  const clearOverlay = useOverlayStore((s) => s.clearOverlay);
 
   const [turnTable, setTurnTable] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchMode, setSearchMode] =
+    useState<"name" | "neighbor">("name");
 
-  const loadFavelas = useFavelaStore(s => s.loadFavelas);
+  const loadFavelas = useFavelaStore((s) => s.loadFavelas);
+  const favela = useFavela();
 
   useEffect(() => {
     loadFavelas();
   }, []);
 
-  const favela = useFavela();
-
+  // 🔧 viewport height real
   useEffect(() => {
-    if (favela) {
-      console.log("📦 Favela derivada:", favela);
-    }
-  }, [favela]);
+    const setVh = () => {
+      document.documentElement.style.setProperty(
+        "--vh",
+        `${window.innerHeight * 0.01}px`
+      );
+    };
+    setVh();
+    window.addEventListener("resize", setVh);
+    return () => window.removeEventListener("resize", setVh);
+  }, []);
 
   const pointCloudUrl = favela
     ? `/api/favela/${favela.id}/periodos/2017/flaz.arrow`
     : null;
-
-  useEffect(() => {
-    if (pointCloudUrl) {
-      console.log("☁️ PointCloud URL:", pointCloudUrl);
-    }
-  }, [pointCloudUrl]);
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchMode, setSearchMode] = useState<"name" | "neighbor">("name");
-
-  const overlay = useOverlayStore(s => s.activeOverlay);
-  const clearOverlay = useOverlayStore(s => s.clearOverlay);
 
   function resetSceneRotation() {
     if (!sceneRef.current) return;
     sceneRef.current.rotation.set(0, 0, 0);
   }
 
-  function handleTurnTable() {
-    setTurnTable((v) => !v);
-  }
-
   function handleReset3D() {
     setTurnTable(false);
     resetSceneRotation();
-
-    // 🔑 sem isso, Reset3D não faz nada de câmera
     controlsRef.current?.reset();
   }
 
@@ -106,25 +98,36 @@ export default function App() {
 
     const camera = controls.object as THREE.PerspectiveCamera;
     const target = controls.target as THREE.Vector3;
-
-    // distância atual câmera → target
     const distance = camera.position.distanceTo(target);
 
-    // ✅ TopView em Z-up: sobe no eixo Z e olha pro target
     camera.position.set(target.x, target.y, target.z + distance);
-    camera.up.set(0, 1, 0); // mantém orientação estável
+    camera.up.set(0, 1, 0);
     camera.lookAt(target);
-
     controls.update();
   }
 
-  const activeOverlay = useOverlayStore((s) => s.activeOverlay);
-
   return (
     <div className="relative w-screen h-screen overflow-hidden">
+
+      {/* Drawer lateral */}
       <SideDrawer />
 
-      <div 
+      {/* 🔥 OVERLAY GLOBAL — fora do container com transform */}
+      <FavelaSearchOverlay
+        open={activeOverlay.startsWith("search_")}
+        searchQuery={searchQuery}
+        searchMode={
+          activeOverlay === "search_neighbor"
+            ? "neighbor"
+            : activeOverlay === "search_hex"
+            ? "hex"
+            : "name"
+        }
+        onClose={clearOverlay}
+      />
+
+      {/* 🔽 CONTAINER PRINCIPAL (transformável) */}
+      <div
         className="
           h-full w-full
           flex flex-col
@@ -136,37 +139,20 @@ export default function App() {
             : "translateX(0)",
         }}
       >
-
         <TopBar
           className="relative z-20"
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
         />
 
-        <FavelaSearchOverlay
-          open={activeOverlay.startsWith("search_")}
-          searchMode={
-            activeOverlay === "search_neighbor"
-              ? "neighbor"
-              : activeOverlay === "search_hex"
-              ? "hex"
-              : "name"
-          }
-          onClose={clearOverlay}
-        />
-
         {/* CENA */}
         <div className="relative flex-1">
 
-          {/* CARD FIXO DA FAVELA */}
+          {/* Card fixo */}
           {favela && (
             <div
               className="absolute z-30"
-              style={{
-                top: 16,      // abaixo da TopBar
-                left: 16,
-                right: 16,
-              }}
+              style={{ top: 16, left: 16, right: 16 }}
             >
               <FavelaCard favela={favela} />
             </div>
@@ -185,39 +171,31 @@ export default function App() {
 
             <SceneTurnTable enabled={turnTable} sceneRef={sceneRef}>
               {pointCloudUrl && (
-                <PointCloud
-                  url={pointCloudUrl}
-                  meta={favela} // ainda fixo, tudo bem por enquanto
-                />
+                <PointCloud url={pointCloudUrl} meta={favela} />
               )}
             </SceneTurnTable>
-
           </Canvas>
 
           {activeOverlay === "sampa_h3" && (
-            <div
-              className="absolute inset-0 z-40 leaflet-desaturated"
-              style={{ pointerEvents: "auto" }}
-            >
+            <div className="absolute inset-0 z-40 leaflet-desaturated">
               <H3LeafletMap />
             </div>
           )}
-          
+
           <ColorBar />
         </div>
 
+        {/* Footer fixo */}
         <BottomDock
-          onTurnTable={handleTurnTable}
+          onTurnTable={() => setTurnTable((v) => !v)}
           onReset3D={handleReset3D}
           onTopView={handleTopView}
           onNeighborSearch={() => {
             setSearchMode("neighbor");
-            setSearchQuery("");      // opcional, mas bom
-            setSearchOpen(true);     // 🔥 AQUI abre o overlay
+            setSearchQuery("");
+            useOverlayStore.getState().setOverlay("search_neighbor");
           }}
-          className="z-20 shrink-0"
         />
-
       </div>
     </div>
   );

@@ -84,14 +84,14 @@ export default function FavelaSearchOverlay({
   return (
     <div
       className="
-        absolute z-40
+        fixed z-40
         left-0 right-0
         bg-white/90
         backdrop-blur
       "
       style={{
         top: 56, // logo abaixo da TopBar (h-14)
-        bottom: 0,
+        height: "calc((var(--vh, 1vh) * 100) - 56px - 64px)",
       }}
     >
       {/* Área scrollável */}
