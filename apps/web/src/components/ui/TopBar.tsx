@@ -1,29 +1,29 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import Logo from "../../assets/icons/Logo.svg";
 import HamburguerMenu from "../../assets/icons/HamburguerMenu.svg";
 import SearchIcon from "../../assets/icons/Search.svg";
 
 import { useUIStore } from "../../state/uiStore";
-
 import { useOverlayStore } from "../../state/overlayStore";
 
 export default function TopBar({
   className = "",
-  searchOpen,
-  setSearchOpen,
   searchQuery,
   setSearchQuery,
 }: {
   className?: string;
-  searchOpen: boolean;
-  setSearchOpen: (v: boolean) => void;
   searchQuery: string;
   setSearchQuery: (v: string) => void;
 }) {
   const toggleMenu = useUIStore((s) => s.toggleMenu);
 
-  // const [searchOpen, setSearchOpen] = useState(false);
+  const activeOverlay = useOverlayStore((s) => s.activeOverlay);
+  const setOverlay = useOverlayStore((s) => s.setOverlay);
+  const clearOverlay = useOverlayStore((s) => s.clearOverlay);
+
+  const searchOpen = activeOverlay.startsWith("search_");
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   // foco automático ao abrir
@@ -32,8 +32,6 @@ export default function TopBar({
       inputRef.current?.focus();
     }
   }, [searchOpen]);
-
-  const setOverlay = useOverlayStore(s => s.setOverlay);
 
   return (
     <header
@@ -70,7 +68,7 @@ export default function TopBar({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Escape") setSearchOpen(false);
+              if (e.key === "Escape") clearOverlay();
             }}
             className="
               h-9 w-[280px]
