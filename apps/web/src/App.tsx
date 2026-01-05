@@ -2,6 +2,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
+import "./styles/leaflet.css";
 import { useFavelaStore } from "./state/favelaStore";
 import { useFavela } from "./hooks/useFavela";
 import FavelaSearchOverlay from "./components/ui/FavelaSearchOverlay";
@@ -18,8 +19,6 @@ import ColorBar from "./components/scene/ColorBar";
 
 import { useOverlayStore } from "./state/overlayStore";
 import H3LeafletMap from "./components/map/H3LeafletMap";
-
-
 
 function SceneTurnTable({
   enabled,
@@ -190,16 +189,15 @@ export default function App() {
 
           </Canvas>
 
-          {/* OVERLAYS HTML */}
           {activeOverlay === "sampa_h3" && (
             <div
-              className="absolute inset-0 z-40"
+              className="absolute inset-0 z-40 leaflet-desaturated"
               style={{ pointerEvents: "auto" }}
             >
               <H3LeafletMap />
             </div>
           )}
-
+          
           <ColorBar />
         </div>
 

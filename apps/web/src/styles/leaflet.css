@@ -1,0 +1,9 @@
+/* Dessatura todos os tiles do Leaflet */
+.leaflet-tile {
+  filter:
+    grayscale(100%)
+    saturate(0%)
+    brightness(1.0)
+    contrast(1.1);
+}
+

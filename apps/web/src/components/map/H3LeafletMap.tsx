@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Polygon } from "react-leaflet";
+import { MapContainer, TileLayer, Polygon, useMap } from "react-leaflet";
 import { cellToBoundary } from "h3-js";
 
 type H3Hex = {
@@ -7,6 +7,28 @@ type H3Hex = {
   center: [number, number]; // [lng, lat]
   color: string;           // "#RRGGBB"
 };
+
+function FitToHexes({ hexes }: { hexes: H3Hex[] }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!hexes.length) return;
+
+    const bounds = hexes.flatMap((hex) =>
+      cellToBoundary(hex.h3, true).map(
+        ([lng, lat]) => [lat, lng] as [number, number]
+      )
+    );
+
+    map.fitBounds(bounds, {
+      padding: [10, 10],
+      animate: true,
+      duration: 1.2,
+    });
+  }, [hexes, map]);
+
+  return null;
+}
 
 export default function H3LeafletMap() {
   const [hexes, setHexes] = useState<H3Hex[]>([]);
@@ -33,7 +55,10 @@ export default function H3LeafletMap() {
       <TileLayer
         attribution="© OpenStreetMap"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        className="desaturated"
       />
+
+      <FitToHexes hexes={hexes} />
 
       {hexes.map((hex) => {
         const boundary = cellToBoundary(hex.h3, true);
