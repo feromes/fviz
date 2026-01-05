@@ -1,31 +1,29 @@
-import { Html } from "@react-three/drei";
+import { useEffect, useState } from "react";
+import H3HexMesh from "./H3HexMesh";
+
+type H3Hex = {
+  h3: string;
+  center: [number, number];
+  color: string; // "#RRGGBB"
+};
 
 export default function H3SampaLayer() {
-  console.log("🟢 H3SampaLayer MONTADO");
+  const [hexes, setHexes] = useState<H3Hex[]>([]);
+
+  useEffect(() => {
+    fetch("/api/h3_r8_buf1200.json")
+      .then((r) => r.json())
+      .then((data) => {
+        setHexes(data.hexes);
+        console.log("🟢 H3 carregado:", data.hexes.length);
+      });
+  }, []);
 
   return (
     <group>
-      {/* Texto flutuante */}
-      <Html center>
-        <div
-          style={{
-            background: "black",
-            color: "lime",
-            padding: "12px 16px",
-            borderRadius: 8,
-            fontFamily: "monospace",
-            fontSize: 14,
-          }}
-        >
-          H3 SAMPA ATIVO
-        </div>
-      </Html>
-
-      {/* Cubo gigante no centro */}
-      <mesh position={[0, 0, 200]}>
-        <boxGeometry args={[300, 300, 300]} />
-        <meshStandardMaterial color="hotpink" />
-      </mesh>
+      {hexes.map((hex) => (
+        <H3HexMesh key={hex.h3} hex={hex} />
+      ))}
     </group>
   );
 }
