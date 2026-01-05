@@ -1,13 +1,25 @@
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Polygon, useMap } from "react-leaflet";
-import { cellToBoundary } from "h3-js";
+import { cellToBoundary, cellToLatLng } from "h3-js";
 import { useOverlayStore } from "../../state/overlayStore";
-import { useNeighborStore } from "../../state/neighborStore";
+import proj4 from "proj4";
+
+// WGS84
+proj4.defs(
+  "EPSG:4326",
+  "+proj=longlat +datum=WGS84 +no_defs"
+);
+
+// SIRGAS 2000 / UTM 23S (São Paulo)
+proj4.defs(
+  "EPSG:31983",
+  "+proj=utm +zone=23 +south +datum=SIRGAS2000 +units=m +no_defs"
+);
 
 type H3Hex = {
   h3: string;
-  center: [number, number]; // [lng, lat]
-  color: string;           // "#RRGGBB"
+  center: [number, number]; // ⚠️ backend provavelmente [lat, lng]
+  color: string;
 };
 
 function FitToHexes({ hexes }: { hexes: H3Hex[] }) {
@@ -32,8 +44,21 @@ function FitToHexes({ hexes }: { hexes: H3Hex[] }) {
   return null;
 }
 
+function wgs84ToSirgas(
+  lng: number,
+  lat: number
+): [number, number] {
+  return proj4(
+    "EPSG:4326",
+    "EPSG:31983",
+    [lng, lat]
+  ) as [number, number];
+}
+
+
 export default function H3LeafletMap() {
   const [hexes, setHexes] = useState<H3Hex[]>([]);
+  const setHexSearch = useOverlayStore((s) => s.setHexSearch);
 
   useEffect(() => {
     fetch("/api/h3_r8_buf1200.json")
@@ -43,12 +68,10 @@ export default function H3LeafletMap() {
         console.log("🟢 H3 Leaflet carregado:", data.hexes.length);
       });
   }, []);
-  
-  const setHexSearch = useOverlayStore((s) => s.setHexSearch);
 
   return (
     <MapContainer
-      center={[-23.55, -46.63]} // São Paulo
+      center={[-23.55, -46.63]} // [lat, lng]
       zoom={11}
       style={{
         width: "100%",
@@ -83,18 +106,19 @@ export default function H3LeafletMap() {
             }}
             eventHandlers={{
               click: () => {
+                const [lng, lat] = hex.center;
+
+                const centerSirgas = wgs84ToSirgas(lng, lat);
+
                 setHexSearch({
                   h3: hex.h3,
-                  center: hex.center, // [lng, lat]
+                  center: centerSirgas, // [x, y] em metros ✅
                 });
               },
             }}
           />
         );
       })}
-
-
-
     </MapContainer>
   );
 }

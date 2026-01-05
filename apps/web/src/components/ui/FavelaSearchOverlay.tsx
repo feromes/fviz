@@ -2,8 +2,6 @@ import { useFavelaStore } from "../../state/favelaStore";
 import FavelaCard from "./FavelaCard";
 import { useOverlayStore } from "../../state/overlayStore";
 
-
-
 type FavelaSearchOverlayProps = {
   open: boolean;
   searchQuery?: string;   // 👈 opcional
