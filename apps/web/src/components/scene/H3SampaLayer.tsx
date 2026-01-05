@@ -1,14 +1,30 @@
+import { Html } from "@react-three/drei";
+
 export default function H3SampaLayer() {
+  console.log("🟢 H3SampaLayer MONTADO");
+
   return (
     <group>
-      <mesh rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[20000, 20000]} />
-        <meshBasicMaterial
-          color="#dddddd"
-          wireframe
-          transparent
-          opacity={0.3}
-        />
+      {/* Texto flutuante */}
+      <Html center>
+        <div
+          style={{
+            background: "black",
+            color: "lime",
+            padding: "12px 16px",
+            borderRadius: 8,
+            fontFamily: "monospace",
+            fontSize: 14,
+          }}
+        >
+          H3 SAMPA ATIVO
+        </div>
+      </Html>
+
+      {/* Cubo gigante no centro */}
+      <mesh position={[0, 0, 200]}>
+        <boxGeometry args={[300, 300, 300]} />
+        <meshStandardMaterial color="hotpink" />
       </mesh>
     </group>
   );

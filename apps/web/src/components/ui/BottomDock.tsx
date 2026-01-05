@@ -71,7 +71,10 @@ export default function BottomDock({
         {/* TurnTable */}
         <button
           type="button"
-          onClick={onTurnTable}
+          onClick={() => {
+            onTurnTable?.();
+            clearOverlay();
+          }}
           aria-label="Ativar rotação automática (TurnTable)"
           className="
             h-10 w-10
@@ -88,7 +91,10 @@ export default function BottomDock({
         {/* Reset 3D */}
         <button
           type="button"
-          onClick={onReset3D}
+          onClick={() => {
+            onReset3D?.();
+            clearOverlay();
+          }}
           aria-label="Resetar visualização 3D"
           className="
             h-10 w-10
@@ -105,7 +111,10 @@ export default function BottomDock({
         {/* Top View */}
         <button
           type="button"
-          onClick={onTopView}
+          onClick={() => {
+            onTopView?.();
+            clearOverlay();
+          }}
           aria-label="Vista superior (Top View)"
           className="
             h-10 w-10
@@ -122,7 +131,10 @@ export default function BottomDock({
         {/* Legenda / ColorBar */}
         <button
           type="button"
-          onClick={toggleVisible}
+          onClick={() => {
+            toggleVisible();
+            clearOverlay();
+          }}
           aria-label="Mostrar/ocultar legenda de cores"
           className={`
             h-10 w-10
