@@ -1,12 +1,15 @@
 import { useFavelaStore } from "../../state/favelaStore";
 import FavelaCard from "./FavelaCard";
+import { useNeighborStore } from "../../state/neighborStore";
+
 
 type FavelaSearchOverlayProps = {
   open: boolean;
-  searchQuery: string;
+  searchQuery?: string;   // 👈 opcional
   searchMode: SearchMode;
   onClose: () => void;
 };
+
 
 type SearchMode = "name" | "neighbor";
 
@@ -20,7 +23,9 @@ export default function FavelaSearchOverlay({
   const selectFavela = useFavelaStore((s) => s.selectFavela);
   const favelaAtiva = useFavelaStore((s) => s.favelaAtiva);
 
-  const query = searchQuery.trim().toLowerCase();
+  const reference = useNeighborStore((s) => s.reference);
+
+  const query = (searchQuery ?? "").trim().toLowerCase();
   // const searchMode = DEFAULT_SEARCH_MODE;
 
   // 🔽 filtro continua exatamente como já estava
@@ -54,6 +59,18 @@ export default function FavelaSearchOverlay({
         .sort((a, b) =>
           distance2D(a.centroid, ref) -
           distance2D(b.centroid, ref)
+        );
+    }
+
+    if (searchMode === "neighbor" && reference) {
+      const ref = reference; // [lng, lat]
+
+      return [...filtered]
+        .filter((f) => f.centroid)
+        .sort(
+          (a, b) =>
+            distance2D(a.centroid, ref) -
+            distance2D(b.centroid, ref)
         );
     }
 

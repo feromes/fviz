@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Polygon, useMap } from "react-leaflet";
 import { cellToBoundary } from "h3-js";
+import { useOverlayStore } from "../../state/overlayStore";
+import { useNeighborStore } from "../../state/neighborStore";
+
 
 type H3Hex = {
   h3: string;
@@ -42,6 +45,9 @@ export default function H3LeafletMap() {
       });
   }, []);
 
+  const setReference = useNeighborStore((s) => s.setReference);
+  const setOverlay = useOverlayStore((s) => s.setOverlay);
+
   return (
     <MapContainer
       center={[-23.55, -46.63]} // São Paulo
@@ -72,10 +78,23 @@ export default function H3LeafletMap() {
             key={hex.h3}
             positions={polygon}
             pathOptions={{
-              color: hex.color || "#ff0000",
-              fillColor: hex.color || "#ff0000",
+              color: hex.color,
+              fillColor: hex.color,
               weight: 1,
               fillOpacity: 0.6,
+            }}
+            eventHandlers={{
+              click: () => {
+                // 1️⃣ guarda o centro do hex
+                setReference(hex.center); // [lng, lat]
+
+                // 2️⃣ abre o overlay de busca
+                setOverlay("none"); // fecha mapa, se quiser
+                setOverlay("favela_search"); // se preferir, ou controlar no App
+
+                // se você já controla isso pelo App:
+                // apenas deixe o estado preparado
+              },
             }}
           />
         );

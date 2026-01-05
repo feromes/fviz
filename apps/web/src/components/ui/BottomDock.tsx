@@ -12,9 +12,8 @@ type BottomDockProps = {
   onTurnTable?: () => void;
   onReset3D?: () => void;
   onTopView?: () => void;
-
-  onNeighborSearch?: () => void; // 🔽 NOVO
 };
+
 
 export default function BottomDock({
   onTurnTable,
@@ -23,9 +22,8 @@ export default function BottomDock({
   onNeighborSearch,
 }: BottomDockProps) {
   const { visible, toggleVisible } = useColorMapStore();
-  const setOverlay = useOverlayStore((s) => s.setOverlay);
   const clearOverlay = useOverlayStore((s) => s.clearOverlay);
-
+  const setOverlay = useOverlayStore(s => s.setOverlay);
 
   return (
     <footer className="h-16 w-full bg-[#EDEDED] flex items-center justify-center">
@@ -51,22 +49,13 @@ export default function BottomDock({
         {/* Vizinhança */}
         <button
           type="button"
-          onClick={() => {
-            onNeighborSearch?.();
-            clearOverlay();
-          }}
+          onClick={() => setOverlay("search_neighbor")}
           aria-label="Buscar favelas por vizinhança"
-          className="
-            h-10 w-10
-            flex items-center justify-center
-            rounded-xl
-            hover:bg-black/10
-            active:scale-95
-            transition
-          "
+          className="h-10 w-10 flex items-center justify-center rounded-xl hover:bg-black/10 active:scale-95 transition"
         >
           <img src={VizinhancaIcon} alt="" className="h-6 w-6" />
         </button>
+
 
         {/* TurnTable */}
         <button

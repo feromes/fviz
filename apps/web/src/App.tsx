@@ -74,9 +74,11 @@ export default function App() {
     }
   }, [pointCloudUrl]);
 
-  const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchMode, setSearchMode] = useState<"name" | "neighbor">("name");
+
+  const overlay = useOverlayStore(s => s.activeOverlay);
+  const clearOverlay = useOverlayStore(s => s.clearOverlay);
 
   function resetSceneRotation() {
     if (!sceneRef.current) return;
@@ -137,17 +139,21 @@ export default function App() {
 
         <TopBar
           className="relative z-20"
-          searchOpen={searchOpen}
-          setSearchOpen={setSearchOpen}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
         />
 
+
         <FavelaSearchOverlay
-          open={searchOpen}
-          searchQuery={searchQuery}
-          searchMode={searchMode} 
-          onClose={() => setSearchOpen(false)}
+          open={overlay.startsWith("search_")}
+          searchMode={
+            overlay === "search_neighbor"
+              ? "neighbor"
+              : overlay === "search_hex"
+              ? "hex"
+              : "name"
+          }
+          onClose={clearOverlay}
         />
 
         {/* CENA */}

@@ -6,6 +6,8 @@ import SearchIcon from "../../assets/icons/Search.svg";
 
 import { useUIStore } from "../../state/uiStore";
 
+import { useOverlayStore } from "../../state/overlayStore";
+
 export default function TopBar({
   className = "",
   searchOpen,
@@ -30,6 +32,8 @@ export default function TopBar({
       inputRef.current?.focus();
     }
   }, [searchOpen]);
+
+  const setOverlay = useOverlayStore(s => s.setOverlay);
 
   return (
     <header
@@ -83,7 +87,7 @@ export default function TopBar({
 
       {/* DIREITA — Search toggle */}
       <button
-        onClick={() => setSearchOpen((v) => !v)}
+        onClick={() => setOverlay("search_name")}
         className="absolute right-4"
       >
         <img src={SearchIcon} alt="Search" className="h-6 w-6" />
