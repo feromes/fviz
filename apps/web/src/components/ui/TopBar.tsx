@@ -55,11 +55,13 @@ export default function TopBar({
           </button>
         )}
 
-        <img
-          src={Logo}
-          alt="FVIZ"
-          className="h-[44px] w-auto select-none"
-        />
+        {!isMenuOpen && (
+          <img
+            src={Logo}
+            alt="FVIZ"
+            className="h-[44px] w-auto select-none"
+          />
+        )}
       </div>
 
       {/* CENTRO — Search input */}

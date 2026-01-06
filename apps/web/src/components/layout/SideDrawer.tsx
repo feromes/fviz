@@ -88,7 +88,7 @@ export default function SideDrawer() {
         <img
           src={Logo}
           alt="FVIZ"
-          className="h-[36px] w-auto select-none"
+          className="h-[44px] w-auto select-none"
         />
       </div>
 
