@@ -26,6 +26,8 @@ export default function TopBar({
 
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const isMenuOpen = useUIStore((s) => s.isMenuOpen);
+
   // foco automático ao abrir
   useEffect(() => {
     if (searchOpen) {
@@ -47,9 +49,11 @@ export default function TopBar({
     >
       {/* ESQUERDA — Menu + Logo */}
       <div className="flex items-center gap-3">
-        <button onClick={toggleMenu}>
-          <img src={HamburguerMenu} alt="Menu" className="h-6 w-6" />
-        </button>
+        {!isMenuOpen && (
+          <button onClick={toggleMenu}>
+            <img src={HamburguerMenu} alt="Menu" className="h-6 w-6" />
+          </button>
+        )}
 
         <img
           src={Logo}
