@@ -1,18 +1,30 @@
-// src/components/scene/MDTScene.tsx
-import { useMemo } from "react";
+import { useLoader } from "@react-three/fiber";
+import { TextureLoader } from "three";
 import * as THREE from "three";
 
 export default function MDTScene() {
-  const mesh = useMemo(() => {
-    const geometry = new THREE.BoxGeometry(300, 300, 50);
-    const material = new THREE.MeshStandardMaterial({
-      color: "#8B5CF6",
-      roughness: 0.7,
-      metalness: 0.1,
-    });
+  const texture = useLoader(
+    TextureLoader,
+    "/api/favela/sao_remo/periodos/2017/mdt.png"
+  );
 
-    return new THREE.Mesh(geometry, material);
-  }, []);
+  texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  texture.colorSpace = THREE.NoColorSpace;
 
-  return <primitive object={mesh} />;
+  return (
+    <mesh rotation={[0, 0, 0]}>
+      <planeGeometry args={[3000, 3000, 256, 256]} />
+
+      <meshStandardMaterial
+        map={texture}
+        displacementMap={texture}
+        displacementScale={200}
+        alphaMap={texture}   // 🔥 aqui está o truque
+        transparent
+        side={THREE.DoubleSide}
+      />
+    </mesh>
+  );
 }
