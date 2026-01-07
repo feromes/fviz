@@ -17,6 +17,7 @@ import ColorBar from "./components/scene/ColorBar";
 import H3LeafletMap from "./components/map/H3LeafletMap";
 
 import SceneRouter from "./components/scene/SceneRouter";
+import { useSceneControlStore } from "./state/sceneControlStore";
 
 
 export default function App() {
@@ -156,9 +157,15 @@ export default function App() {
 
         {/* Footer fixo */}
         <BottomDock
-          onTurnTable={() => setTurnTable((v) => !v)}
-          onReset3D={handleReset3D}
-          onTopView={handleTopView}
+          onTurnTable={() =>
+            useSceneControlStore.getState().activateTurnTable()
+          }
+          onReset3D={() =>
+            useSceneControlStore.getState().triggerReset3D()
+          }
+          onTopView={() =>
+            useSceneControlStore.getState().triggerTopView()
+          }
           onNeighborSearch={() => {
             setSearchMode("neighbor");
             setSearchQuery("");
