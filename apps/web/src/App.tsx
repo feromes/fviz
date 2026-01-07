@@ -19,10 +19,13 @@ import H3LeafletMap from "./components/map/H3LeafletMap";
 import SceneRouter from "./components/scene/SceneRouter";
 import { useSceneControlStore } from "./state/sceneControlStore";
 
+import { useFavela } from "./hooks/useFavela";
+
 
 export default function App() {
   // const controlsRef = useRef<any>(null);
   // const sceneRef = useRef<THREE.Group>(null);
+  useFavela();
 
   const isMenuOpen = useUIStore((s) => s.isMenuOpen);
   const activeOverlay = useOverlayStore((s) => s.activeOverlay);
