@@ -11,6 +11,7 @@ import { useSceneControlStore } from "../../state/sceneControlStore";
 import { useEffect } from "react";
 
 import MDTScene from "./MDTScene";
+import MDTSceneVoxel from "./MDTSceneVoxel";
 import { useSceneStore } from "../../state/sceneStore";
 
 
@@ -88,6 +89,18 @@ export default function PointCloudScene() {
       {scene === "mdt" && (
         <MDTScene />
       )}
+
+      {/* {scene === "mdt" && (
+        <MDTSceneVoxel
+          url="/api/favela/sao_remo/periodos/2017/mds.png"
+          pixelSize={8}
+          heightScale={0.8}
+          step={2}        // começa com 2 pra não matar performance
+          nodata={0}
+          minHeight={2}
+        />
+      )} */}
+
     </SceneTurnTable>
 
     </Canvas>
