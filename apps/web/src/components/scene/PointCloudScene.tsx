@@ -36,14 +36,15 @@ export default function PointCloudScene() {
 
     if (cameraMode === "reset") {
       // ✅ reset = vista 3D (não top)
+      controls.reset();
       group?.rotation.set(0, 0, 0);
 
-      camera.position.set(dist * 0.8, -dist * 0.8, dist * 0.55);
-      camera.up.set(0, 1, 0);
-      camera.lookAt(target);
+      // camera.position.set(dist * 0.8, -dist * 0.8, dist * 0.55);
+      // camera.up.set(0, 1, 0);
+      // camera.lookAt(target);
 
-      controls.update();
-      controls.saveState(); // 🔥 faz o controls.reset voltar pra esse preset
+      // controls.update();
+      // controls.saveState(); // 🔥 faz o controls.reset voltar pra esse preset
       return;
     }
 
