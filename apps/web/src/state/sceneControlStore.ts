@@ -1,39 +1,21 @@
+// src/state/sceneControlStore.ts
 import { create } from "zustand";
 
+export type CameraMode = "reset" | "top" | "free";
+
 interface SceneControlState {
+  cameraMode: CameraMode;
+  setCameraMode: (mode: CameraMode) => void;
   turnTable: boolean;
-
-  reset3D: number;
-  topView: number;
-
-  activateTurnTable: () => void;
-  triggerReset3D: () => void;
-  triggerTopView: () => void;
 }
 
 export const useSceneControlStore = create<SceneControlState>((set) => ({
+  cameraMode: "reset",
   turnTable: false,
 
-  reset3D: 0,
-  topView: 0,
-
-  // 🔁 TurnTable desliga os outros
-  activateTurnTable: () =>
+  setCameraMode: (mode) =>
     set({
-      turnTable: true,
+      cameraMode: mode,
+      turnTable: mode === "free",
     }),
-
-  // 🔁 Reset desliga TurnTable
-  triggerReset3D: () =>
-    set((s) => ({
-      turnTable: false,
-      reset3D: s.reset3D + 1,
-    })),
-
-  // 🔁 TopView desliga TurnTable
-  triggerTopView: () =>
-    set((s) => ({
-      turnTable: false,
-      topView: s.topView + 1,
-    })),
 }));

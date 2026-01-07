@@ -35,12 +35,14 @@ export default function App() {
   const favelaAtiva = useFavelaStore((s) => s.favelaAtiva);
   const selectFavela = useFavelaStore((s) => s.selectFavela);
 
+  const setCameraMode = useSceneControlStore((s) => s.setCameraMode);
+
+
   useEffect(() => {
     if (!favelaAtiva && favelas.length > 0) {
       selectFavela(favelas[0]); // São Remo, aleatória, etc.
     }
   }, [favelaAtiva, favelas, selectFavela]);
-
 
   useEffect(() => {
     loadFavelas();
@@ -157,15 +159,9 @@ export default function App() {
 
         {/* Footer fixo */}
         <BottomDock
-          onTurnTable={() =>
-            useSceneControlStore.getState().activateTurnTable()
-          }
-          onReset3D={() =>
-            useSceneControlStore.getState().triggerReset3D()
-          }
-          onTopView={() =>
-            useSceneControlStore.getState().triggerTopView()
-          }
+          onTurnTable={() => setCameraMode("free")}
+          onReset3D={() => setCameraMode("reset")}
+          onTopView={() => setCameraMode("top")}
           onNeighborSearch={() => {
             setSearchMode("neighbor");
             setSearchQuery("");

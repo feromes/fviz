@@ -13,57 +13,55 @@ import { useEffect } from "react";
 
 export default function PointCloudScene() {
   const favelaAtiva = useFavelaStore((s) => s.favelaAtiva);
-  const triggerReset3D = useSceneControlStore((s) => s.triggerReset3D);
 
   const controlsRef = useRef<any>(null);
   const sceneRef = useRef<THREE.Group>(null);
 
   const turnTable = useSceneControlStore((s) => s.turnTable);
 
-  const reset3D = useSceneControlStore((s) => s.reset3D);
-
-  const firstLoadRef = useRef(true);
-
-  useEffect(() => {
-    if (!sceneRef.current || !controlsRef.current) return;
-
-    sceneRef.current.rotation.set(0, 0, 0);
-    controlsRef.current.reset();
-  }, [reset3D]);
-
-  useEffect(() => {
-    if (!favelaAtiva) return;
-
-    if (firstLoadRef.current) {
-      triggerReset3D();
-      firstLoadRef.current = false;
-    }
-  }, [favelaAtiva, triggerReset3D]);
-
-
-  const topView = useSceneControlStore((s) => s.topView);
+  const cameraMode = useSceneControlStore((s) => s.cameraMode);
 
   useEffect(() => {
     const controls = controlsRef.current;
+    const group = sceneRef.current;
     if (!controls) return;
 
     const camera = controls.object as THREE.PerspectiveCamera;
-    const target = controls.target.clone();
+    const target = new THREE.Vector3(0, 0, 0);
 
-    const distance = camera.position.distanceTo(target);
+    controls.target.copy(target);
 
-    camera.position.set(
-      target.x,
-      target.y,
-      target.z + distance
-    );
+    // distância "padrão" baseada na distância atual
+    const dist = camera.position.distanceTo(target) || 8000;
 
-    camera.up.set(0, 1, 0);
-    camera.lookAt(target);
-    controls.update();
+    if (cameraMode === "reset") {
+      // ✅ reset = vista 3D (não top)
+      group?.rotation.set(0, 0, 0);
 
-    console.log("PointCloudScene: Top View aplicado");
-  }, [topView]);
+      camera.position.set(dist * 0.8, -dist * 0.8, dist * 0.55);
+      camera.up.set(0, 1, 0);
+      camera.lookAt(target);
+
+      controls.update();
+      controls.saveState(); // 🔥 faz o controls.reset voltar pra esse preset
+      return;
+    }
+
+    if (cameraMode === "top") {
+      // ✅ top = vista superior real
+      group?.rotation.set(0, 0, 0);
+
+      camera.position.set(target.x, target.y, target.z + dist);
+      camera.up.set(0, 1, 0);
+      camera.lookAt(target);
+
+      controls.update();
+      // controls.saveState();
+      console.log("Setou câmera para top view");
+      return;
+    }
+  }, [cameraMode]);
+
 
 
   if (!favelaAtiva) {
@@ -79,7 +77,7 @@ export default function PointCloudScene() {
       camera={{
         position: [0, 0, 1000 / 0.125],
         near: 1,
-        far: 5000 / 0.125,
+        far: 1000 / 0.125,
       }}
       className="w-full h-full"
     >
@@ -87,7 +85,7 @@ export default function PointCloudScene() {
       <OrbitControls ref={controlsRef} makeDefault />
 
       <mesh position={[0, 0, 0]}>
-        <boxGeometry args={[10, 10, 10]} />
+        <boxGeometry args={[100, 100, 100]} />
         <meshStandardMaterial color="red" />
       </mesh>
 
