@@ -1,21 +1,41 @@
-// src/state/sceneControlStore.ts
 import { create } from "zustand";
 
-export type CameraMode = "reset" | "top" | "free";
+type CameraMode = "free" | "reset" | "top";
 
-interface SceneControlState {
+type SceneControlState = {
   cameraMode: CameraMode;
-  setCameraMode: (mode: CameraMode) => void;
+  cameraTick: number;
+
   turnTable: boolean;
-}
+
+  triggerReset: () => void;
+  triggerTopView: () => void;
+  toggleTurnTable: () => void;
+};
 
 export const useSceneControlStore = create<SceneControlState>((set) => ({
-  cameraMode: "reset",
+  cameraMode: "free",
+  cameraTick: 0,
+
   turnTable: false,
 
-  setCameraMode: (mode) =>
-    set({
-      cameraMode: mode,
-      turnTable: mode === "free",
-    }),
+  triggerReset: () =>
+    set((s) => ({
+      cameraMode: "reset",
+      cameraTick: s.cameraTick + 1,
+      turnTable: false, // 🔥 reset sempre para rotação
+    })),
+
+  triggerTopView: () =>
+    set((s) => ({
+      cameraMode: "top",
+      cameraTick: s.cameraTick + 1,
+      turnTable: false, // 🔥 topView sempre para rotação
+    })),
+
+  toggleTurnTable: () =>
+    set((s) => ({
+      cameraMode: "free", // 🔑 modo livre
+      turnTable: !s.turnTable,
+    })),
 }));

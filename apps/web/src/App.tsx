@@ -37,6 +37,10 @@ export default function App() {
 
   const setCameraMode = useSceneControlStore((s) => s.setCameraMode);
 
+  const triggerReset = useSceneControlStore(s => s.triggerReset);
+  const triggerTopView = useSceneControlStore(s => s.triggerTopView);
+  const toggleTurnTable = useSceneControlStore(s => s.toggleTurnTable);
+
 
   useEffect(() => {
     if (!favelaAtiva && favelas.length > 0) {
@@ -159,9 +163,9 @@ export default function App() {
 
         {/* Footer fixo */}
         <BottomDock
-          onTurnTable={() => setCameraMode("free")}
-          onReset3D={() => setCameraMode("reset")}
-          onTopView={() => setCameraMode("top")}
+          onReset3D={triggerReset}
+          onTopView={triggerTopView}
+          onTurnTable={toggleTurnTable}
           onNeighborSearch={() => {
             setSearchMode("neighbor");
             setSearchQuery("");

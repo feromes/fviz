@@ -19,50 +19,35 @@ export default function PointCloudScene() {
 
   const turnTable = useSceneControlStore((s) => s.turnTable);
 
-  const cameraMode = useSceneControlStore((s) => s.cameraMode);
+  const cameraMode = useSceneControlStore(s => s.cameraMode);
+  const cameraTick = useSceneControlStore(s => s.cameraTick);
 
   useEffect(() => {
-    const controls = controlsRef.current;
-    const group = sceneRef.current;
-    if (!controls) return;
+  if (!controlsRef.current) return;
 
-    const camera = controls.object as THREE.PerspectiveCamera;
-    const target = new THREE.Vector3(0, 0, 0);
+  const controls = controlsRef.current;
+  const camera = controls.object as THREE.PerspectiveCamera;
+  const target = new THREE.Vector3(0, 0, 0);
 
-    controls.target.copy(target);
+  if (cameraMode === "reset") {
+    sceneRef.current?.rotation.set(0, 0, 0);
+    controls.reset();
+    controls.update();
+    return;
+  }
 
-    // distância "padrão" baseada na distância atual
-    const dist = camera.position.distanceTo(target) || 8000;
+  if (cameraMode === "top") {
+    const dist = camera.position.distanceTo(target) || 1000;
 
-    if (cameraMode === "reset") {
-      // ✅ reset = vista 3D (não top)
-      controls.reset();
-      group?.rotation.set(0, 0, 0);
+    camera.position.set(target.x, target.y, target.z + dist);
+    camera.up.set(0, 1, 0);
+    camera.lookAt(target);
 
-      // camera.position.set(dist * 0.8, -dist * 0.8, dist * 0.55);
-      // camera.up.set(0, 1, 0);
-      // camera.lookAt(target);
+    controls.update();
+    return;
+  }
 
-      // controls.update();
-      // controls.saveState(); // 🔥 faz o controls.reset voltar pra esse preset
-      return;
-    }
-
-    if (cameraMode === "top") {
-      // ✅ top = vista superior real
-      group?.rotation.set(0, 0, 0);
-
-      camera.position.set(target.x, target.y, target.z + dist);
-      camera.up.set(0, 1, 0);
-      camera.lookAt(target);
-
-      controls.update();
-      // controls.saveState();
-      console.log("Setou câmera para top view");
-      return;
-    }
-  }, [cameraMode]);
-
+}, [cameraMode, cameraTick]); // 🔥 TICK É A CHAVE
 
 
   if (!favelaAtiva) {
