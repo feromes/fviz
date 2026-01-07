@@ -1,12 +1,9 @@
-import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import "./styles/leaflet.css";
 import * as THREE from "three";
 
 import { useFavelaStore } from "./state/favelaStore";
-import { useFavela } from "./hooks/useFavela";
 import { useUIStore } from "./state/uiStore";
 import { useOverlayStore } from "./state/overlayStore";
 
@@ -16,30 +13,11 @@ import BottomDock from "./components/ui/BottomDock";
 import FavelaCard from "./components/ui/FavelaCard";
 import FavelaSearchOverlay from "./components/ui/FavelaSearchOverlay";
 
-import { PointCloud } from "./components/scene/PointCloud";
 import ColorBar from "./components/scene/ColorBar";
 import H3LeafletMap from "./components/map/H3LeafletMap";
 
-function SceneTurnTable({
-  enabled,
-  speed = 0.6,
-  sceneRef,
-  children,
-}: {
-  enabled: boolean;
-  speed?: number;
-  sceneRef: React.RefObject<THREE.Group>;
-  children: React.ReactNode;
-}) {
-  useFrame((_, delta) => {
-    if (!enabled) return;
-    const g = sceneRef.current;
-    if (!g) return;
-    g.rotation.z += delta * speed;
-  });
+import SceneRouter from "./components/scene/SceneRouter";
 
-  return <group ref={sceneRef}>{children}</group>;
-}
 
 export default function App() {
   const controlsRef = useRef<any>(null);
@@ -49,13 +27,19 @@ export default function App() {
   const activeOverlay = useOverlayStore((s) => s.activeOverlay);
   const clearOverlay = useOverlayStore((s) => s.clearOverlay);
 
-  const [turnTable, setTurnTable] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchMode, setSearchMode] =
-    useState<"name" | "neighbor">("name");
 
   const loadFavelas = useFavelaStore((s) => s.loadFavelas);
-  const favela = useFavela();
+  const favelas = useFavelaStore((s) => s.favelas);
+  const favelaAtiva = useFavelaStore((s) => s.favelaAtiva);
+  const selectFavela = useFavelaStore((s) => s.selectFavela);
+
+  useEffect(() => {
+    if (!favelaAtiva && favelas.length > 0) {
+      selectFavela(favelas[0]); // São Remo, aleatória, etc.
+    }
+  }, [favelaAtiva, favelas, selectFavela]);
+
 
   useEffect(() => {
     loadFavelas();
@@ -74,8 +58,8 @@ export default function App() {
     return () => window.removeEventListener("resize", setVh);
   }, []);
 
-  const pointCloudUrl = favela
-    ? `/api/favela/${favela.id}/periodos/2017/flaz.arrow`
+  const pointCloudUrl = favelaAtiva
+    ? `/api/favela/${favelaAtiva.id}/periodos/2017/flaz.arrow`
     : null;
 
   function resetSceneRotation() {
@@ -149,32 +133,17 @@ export default function App() {
         <div className="relative flex-1">
 
           {/* Card fixo */}
-          {favela && (
+          {favelaAtiva && (
             <div
               className="absolute z-30"
               style={{ top: 16, left: 16, right: 16 }}
             >
-              <FavelaCard favela={favela} />
+              <FavelaCard favela={favelaAtiva} />
             </div>
           )}
 
-          <Canvas
-            camera={{
-              position: [0, 0, 1000 / 0.125],
-              near: 1,
-              far: 5000 / 0.125,
-            }}
-            className="w-full h-full"
-          >
-            <ambientLight />
-            <OrbitControls ref={controlsRef} makeDefault />
-
-            <SceneTurnTable enabled={turnTable} sceneRef={sceneRef}>
-              {pointCloudUrl && (
-                <PointCloud url={pointCloudUrl} meta={favela} />
-              )}
-            </SceneTurnTable>
-          </Canvas>
+          {/* Cena 3D / MDT */}
+          <SceneRouter/>
 
           {activeOverlay === "sampa_h3" && (
             <div className="absolute inset-0 z-40 leaflet-desaturated">
