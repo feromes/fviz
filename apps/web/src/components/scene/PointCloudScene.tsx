@@ -10,6 +10,9 @@ import { useFavelaStore } from "../../state/favelaStore";
 import { useSceneControlStore } from "../../state/sceneControlStore";
 import { useEffect } from "react";
 
+import MDTScene from "./MDTScene";
+import { useSceneStore } from "../../state/sceneStore";
+
 
 export default function PointCloudScene() {
   const favelaAtiva = useFavelaStore((s) => s.favelaAtiva);
@@ -22,32 +25,34 @@ export default function PointCloudScene() {
   const cameraMode = useSceneControlStore(s => s.cameraMode);
   const cameraTick = useSceneControlStore(s => s.cameraTick);
 
+  const scene = useSceneStore((s) => s.scene);
+
   useEffect(() => {
-  if (!controlsRef.current) return;
+    if (!controlsRef.current) return;
 
-  const controls = controlsRef.current;
-  const camera = controls.object as THREE.PerspectiveCamera;
-  const target = new THREE.Vector3(0, 0, 0);
+    const controls = controlsRef.current;
+    const camera = controls.object as THREE.PerspectiveCamera;
+    const target = new THREE.Vector3(0, 0, 0);
 
-  if (cameraMode === "reset") {
-    sceneRef.current?.rotation.set(0, 0, 0);
-    controls.reset();
-    controls.update();
-    return;
-  }
+    if (cameraMode === "reset") {
+      sceneRef.current?.rotation.set(0, 0, 0);
+      controls.reset();
+      controls.update();
+      return;
+    }
 
-  if (cameraMode === "top") {
-    const dist = camera.position.distanceTo(target) || 1000;
+    if (cameraMode === "top") {
+      const dist = camera.position.distanceTo(target) || 1000;
 
-    camera.position.set(target.x, target.y, target.z + dist);
-    camera.up.set(0, 1, 0);
-    camera.lookAt(target);
+      camera.position.set(target.x, target.y, target.z + dist);
+      camera.up.set(0, 1, 0);
+      camera.lookAt(target);
 
-    controls.update();
-    return;
-  }
+      controls.update();
+      return;
+    }
 
-}, [cameraMode, cameraTick]); // 🔥 TICK É A CHAVE
+  }, [cameraMode, cameraTick]); // 🔥 TICK É A CHAVE
 
 
   if (!favelaAtiva) {
@@ -76,8 +81,12 @@ export default function PointCloudScene() {
       </mesh> */}
 
     <SceneTurnTable enabled={turnTable} sceneRef={sceneRef}>
-      {pointCloudUrl && (
+      {scene === "pointcloud" && pointCloudUrl && (
         <PointCloud url={pointCloudUrl} meta={favela} />
+      )}
+
+      {scene === "mdt" && (
+        <MDTScene />
       )}
     </SceneTurnTable>
 

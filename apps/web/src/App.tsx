@@ -16,10 +16,11 @@ import FavelaSearchOverlay from "./components/ui/FavelaSearchOverlay";
 import ColorBar from "./components/scene/ColorBar";
 import H3LeafletMap from "./components/map/H3LeafletMap";
 
-import SceneRouter from "./components/scene/SceneRouter";
 import { useSceneControlStore } from "./state/sceneControlStore";
 
 import { useFavela } from "./hooks/useFavela";
+
+import PointCloudScene from "./components/scene/PointCloudScene";
 
 
 export default function App() {
@@ -153,7 +154,7 @@ export default function App() {
           )}
 
           {/* Cena 3D / MDT */}
-          <SceneRouter/>
+          <PointCloudScene />
 
           {activeOverlay === "sampa_h3" && (
             <div className="absolute inset-0 z-40 leaflet-desaturated">

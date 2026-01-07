@@ -10,6 +10,8 @@ import HamburguerMenu from "../../assets/icons/HamburguerMenu.svg";
 
 import { useUIStore } from "../../state/uiStore";
 
+import { useSceneStore } from "../../state/sceneStore";
+
 export const DRAWER_WIDTH = 320;
 
 
@@ -34,7 +36,7 @@ const LAYERS: LayerItem[] = [
     short: "MDT",
     title: "Modelo Digital de Terreno",
     icon: MDTIcon,
-    enabled: false,
+    enabled: true,
   },
   {
     id: "classificacao",
@@ -62,6 +64,9 @@ const LAYERS: LayerItem[] = [
 export default function SideDrawer() {
   const isMenuOpen = useUIStore((s) => s.isMenuOpen);
   const toggleMenu = useUIStore((s) => s.toggleMenu);
+  const setScene = useSceneStore((s) => s.setScene);
+  const scene = useSceneStore((s) => s.scene);
+
 
   return (
     <aside
@@ -95,12 +100,23 @@ export default function SideDrawer() {
       {/* LISTA DE LAYERS */}
       <nav className="p-4 space-y-2">
         {LAYERS.map((layer) => {
-          const isActive = layer.id === "mds"; // por enquanto fixo
+          const isActive = scene === layer.id;
 
           return (
             <button
               key={layer.id}
               disabled={!layer.enabled}
+              onClick={() => {
+                if (!layer.enabled) return;
+
+                if (layer.id === "mdt") {
+                  setScene("mdt");
+                }
+
+                if (layer.id === "mds") {
+                  setScene("pointcloud");
+                }
+              }}
               className={`
                 w-full flex items-center gap-3
                 px-3 py-2 rounded-md
