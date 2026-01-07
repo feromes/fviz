@@ -85,10 +85,10 @@ export default function PointCloudScene() {
       <ambientLight />
       <OrbitControls ref={controlsRef} makeDefault />
 
-      <mesh position={[0, 0, 0]}>
+      {/* <mesh position={[0, 0, 0]}>
         <boxGeometry args={[100, 100, 100]} />
         <meshStandardMaterial color="red" />
-      </mesh>
+      </mesh> */}
 
     <SceneTurnTable enabled={turnTable} sceneRef={sceneRef}>
       {pointCloudUrl && (
