@@ -22,6 +22,8 @@ export default function PointCloudScene() {
 
   const reset3D = useSceneControlStore((s) => s.reset3D);
 
+  const firstLoadRef = useRef(true);
+
   useEffect(() => {
     if (!sceneRef.current || !controlsRef.current) return;
 
@@ -32,8 +34,10 @@ export default function PointCloudScene() {
   useEffect(() => {
     if (!favelaAtiva) return;
 
-    // 🧘 sempre começa parada e bem posicionada
-    triggerReset3D();
+    if (firstLoadRef.current) {
+      triggerReset3D();
+      firstLoadRef.current = false;
+    }
   }, [favelaAtiva, triggerReset3D]);
 
 
@@ -41,31 +45,25 @@ export default function PointCloudScene() {
 
   useEffect(() => {
     const controls = controlsRef.current;
-    if (!controls || !favelaAtiva) return;
+    if (!controls) return;
 
     const camera = controls.object as THREE.PerspectiveCamera;
+    const target = controls.target.clone();
 
-    // 🎯 centro da cena (favela já está normalizada)
-    const target = new THREE.Vector3(0, 0, 0);
-    controls.target.copy(target);
+    const distance = camera.position.distanceTo(target);
 
-    const distance = 2000; // pode ajustar depois via bbox
-
-    // 🔝 TOP VIEW = deslocamento no eixo Z (Z-up world)
     camera.position.set(
       target.x,
       target.y,
       target.z + distance
     );
 
-    // ⚠️ eixo vertical CORRETO para mundo Z-up
     camera.up.set(0, 1, 0);
-
     camera.lookAt(target);
     controls.update();
-    console.log("PointCloudScene: Top View ativado");
-  }, [topView, favelaAtiva]);
 
+    console.log("PointCloudScene: Top View aplicado");
+  }, [topView]);
 
 
   if (!favelaAtiva) {

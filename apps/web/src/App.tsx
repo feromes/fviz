@@ -21,8 +21,8 @@ import { useSceneControlStore } from "./state/sceneControlStore";
 
 
 export default function App() {
-  const controlsRef = useRef<any>(null);
-  const sceneRef = useRef<THREE.Group>(null);
+  // const controlsRef = useRef<any>(null);
+  // const sceneRef = useRef<THREE.Group>(null);
 
   const isMenuOpen = useUIStore((s) => s.isMenuOpen);
   const activeOverlay = useOverlayStore((s) => s.activeOverlay);
@@ -59,37 +59,37 @@ export default function App() {
     return () => window.removeEventListener("resize", setVh);
   }, []);
 
-  const pointCloudUrl = favelaAtiva
-    ? `/api/favela/${favelaAtiva.id}/periodos/2017/flaz.arrow`
-    : null;
+  // const pointCloudUrl = favelaAtiva
+  //   ? `/api/favela/${favelaAtiva.id}/periodos/2017/flaz.arrow`
+  //   : null;
 
-  function resetSceneRotation() {
-    if (!sceneRef.current) return;
-    sceneRef.current.rotation.set(0, 0, 0);
-  }
+  // function resetSceneRotation() {
+  //   if (!sceneRef.current) return;
+  //   sceneRef.current.rotation.set(0, 0, 0);
+  // }
 
-  function handleReset3D() {
-    setTurnTable(false);
-    resetSceneRotation();
-    controlsRef.current?.reset();
-  }
+  // function handleReset3D() {
+  //   setTurnTable(false);
+  //   resetSceneRotation();
+  //   controlsRef.current?.reset();
+  // }
 
-  function handleTopView() {
-    setTurnTable(false);
-    resetSceneRotation();
+  // function handleTopView() {
+  //   setTurnTable(false);
+  //   resetSceneRotation();
 
-    const controls = controlsRef.current;
-    if (!controls) return;
+  //   const controls = controlsRef.current;
+  //   if (!controls) return;
 
-    const camera = controls.object as THREE.PerspectiveCamera;
-    const target = controls.target as THREE.Vector3;
-    const distance = camera.position.distanceTo(target);
+  //   const camera = controls.object as THREE.PerspectiveCamera;
+  //   const target = controls.target as THREE.Vector3;
+  //   const distance = camera.position.distanceTo(target);
 
-    camera.position.set(target.x, target.y, target.z + distance);
-    camera.up.set(0, 1, 0);
-    camera.lookAt(target);
-    controls.update();
-  }
+  //   camera.position.set(target.x, target.y, target.z + distance);
+  //   camera.up.set(0, 1, 0);
+  //   camera.lookAt(target);
+  //   controls.update();
+  // }
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
