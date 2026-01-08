@@ -4,7 +4,6 @@ import MDTScene from "./MDTScene";
 
 export default function SceneRouter() {
   const scene = useSceneStore((s) => s.scene);
-  console.log("SceneRouter → scene =", scene);
 
   if (scene === "mdt") {
     return <MDTScene />;

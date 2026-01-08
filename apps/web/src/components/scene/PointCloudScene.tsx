@@ -92,7 +92,6 @@ export default function PointCloudScene() {
 
 
   if (!favelaAtiva) {
-    console.log("PointCloudScene: favelaAtiva ainda não definida");
     return null;
   }
 
@@ -102,8 +101,6 @@ export default function PointCloudScene() {
   const mdtUrl = `/api/favela/${favela.id}/periodos/2017/mdt.png`;
   const mdtStats = favela.mdt?.stats;
 
-  console.log("favela:", favela);
-  console.log("mdt_size:", favela?.mdt_size);
 
   return (
     <Canvas

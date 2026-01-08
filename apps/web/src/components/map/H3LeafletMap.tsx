@@ -65,7 +65,6 @@ export default function H3LeafletMap() {
       .then((r) => r.json())
       .then((data) => {
         setHexes(data.hexes);
-        console.log("🟢 H3 Leaflet carregado:", data.hexes.length);
       });
   }, []);
 

@@ -15,7 +15,6 @@ export default function H3SampaLayer() {
       .then((r) => r.json())
       .then((data) => {
         setHexes(data.hexes);
-        console.log("🟢 H3 carregado:", data.hexes.length);
       });
   }, []);
 

@@ -30,22 +30,16 @@ export const useColorMapStore = create<ColorMapState>((set) => ({
 
   toggleVisible: () =>
     set((s) => {
-      console.trace("🎨 toggleVisible()");
       return { visible: !s.visible };
     }),
 
   setColorMap: (data) =>
     set((state) => {
-      console.group("🎨 setColorMap");
-      console.log("payload:", data);
-      console.trace("stack:");
-      console.groupEnd();
       return { ...state, ...data };
     }),
 
   hide: () =>
     set((state) => {
-      console.trace("🎨 hideColorMap()");
       return { ...state, visible: false };
     }),
 }));

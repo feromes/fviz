@@ -55,7 +55,6 @@ function FitCameraToPoints({ pointsGeometry }: FitCameraToPointsProps) {
     // 🔥 estado inicial correto do OrbitControls
     controls.saveState();
 
-    console.log('✅ FitCameraToPoints aplicado uma única vez');
   }, [pointsGeometry, camera, controls, size]);
 
   return null;

@@ -5,7 +5,6 @@ import { flazColor } from "../../utils/flazColor";
 
 export default function ColorBar() {
   const { min, max, ref, visible } = useColorMapStore();
-  console.log("ColorBar:", { min, max, ref });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const height = 240;
