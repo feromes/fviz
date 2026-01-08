@@ -66,7 +66,7 @@ export default function SideDrawer() {
   const toggleMenu = useUIStore((s) => s.toggleMenu);
   const setScene = useSceneStore((s) => s.setScene);
   const scene = useSceneStore((s) => s.scene);
-
+  const closeMenu = useUIStore((s) => s.closeMenu);
 
   return (
     <aside
@@ -111,10 +111,12 @@ export default function SideDrawer() {
 
                 if (layer.id === "mdt") {
                   setScene("mdt");
+                  closeMenu();
                 }
 
                 if (layer.id === "mds") {
                   setScene("pointcloud");
+                  closeMenu();
                 }
               }}
               className={`
