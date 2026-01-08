@@ -3,10 +3,16 @@ import { useThree } from "@react-three/fiber";
 import { loadArrow } from "../../loaders/loadArrow";
 import { parseArrowPoints } from "../../loaders/parseArrowPoints";
 import FitCameraToPoints from "./FitCameraToPoints";
+import { useColorModeStore } from "../../state/colorModeStore";
 
 export function PointCloud({ url, meta }) {
   const { camera } = useThree();
   const [geometry, setGeometry] = useState(null);
+  const colorMode = useColorModeStore((s) => s.colorMode);
+
+  useEffect(() => {
+    console.log("🎨 colorMode atual:", colorMode);
+  }, [colorMode]);
 
   useEffect(() => {
     async function run() {

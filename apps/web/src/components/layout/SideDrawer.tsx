@@ -12,6 +12,9 @@ import { useUIStore } from "../../state/uiStore";
 
 import { useSceneStore } from "../../state/sceneStore";
 
+import { useColorModeStore } from "../../state/colorModeStore";
+
+
 export const DRAWER_WIDTH = 320;
 
 
@@ -50,7 +53,7 @@ const LAYERS: LayerItem[] = [
     short: "ARS",
     title: "Altura em relação ao solo",
     icon: HAGIcon,
-    enabled: false,
+    enabled: true,
   },
   {
     id: "delta",
@@ -67,6 +70,7 @@ export default function SideDrawer() {
   const setScene = useSceneStore((s) => s.setScene);
   const scene = useSceneStore((s) => s.scene);
   const closeMenu = useUIStore((s) => s.closeMenu);
+  const setColorMode = useColorModeStore((s) => s.setColorMode);
 
   return (
     <aside
@@ -116,7 +120,14 @@ export default function SideDrawer() {
 
                 if (layer.id === "mds") {
                   setScene("pointcloud");
+                  setColorMode("elevation"); // MDS = cor por elevação (por enquanto)
                   closeMenu();
+                }
+
+                if (layer.id === "hag") {
+                  setScene("pointcloud");    // continua sendo pointcloud
+                  setColorMode("hag");       // só muda a “tinta”
+                  toggleMenu();
                 }
               }}
               className={`
