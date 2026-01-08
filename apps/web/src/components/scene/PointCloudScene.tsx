@@ -65,6 +65,7 @@ export default function PointCloudScene() {
   const mdtSize = sizeFromBounds(favela.mdt?.bounds);
   const pointCloudUrl = `/api/favela/${favela.id}/periodos/2017/flaz.arrow`;
   const mdtUrl = `/api/favela/${favela.id}/periodos/2017/mdt.png`;
+  const mdtStats = favela.mdt?.stats;
 
   console.log("favela:", favela);
   console.log("mdt_size:", favela?.mdt_size);
@@ -81,10 +82,6 @@ export default function PointCloudScene() {
       <ambientLight />
       <OrbitControls ref={controlsRef} makeDefault />
 
-      {/* <mesh position={[0, 0, 0]}>
-        <boxGeometry args={[100, 100, 100]} />
-        <meshStandardMaterial color="red" />
-      </mesh> */}
 
     <SceneTurnTable enabled={turnTable} sceneRef={sceneRef}>
       {scene === "pointcloud" && pointCloudUrl && (
@@ -96,19 +93,10 @@ export default function PointCloudScene() {
           mdtUrl={mdtUrl}
           size={mdtSize}
           displacementScale={favela.mdt_scale ?? 200}
+          heightMin={mdtStats?.min ?? 0}
+          heightMax={mdtStats?.max ?? 1}
         />
       )}
-
-      {/* {scene === "mdt" && (
-        <MDTSceneVoxel
-          url="/api/favela/sao_remo/periodos/2017/mds.png"
-          pixelSize={8}
-          heightScale={0.8}
-          step={2}        // começa com 2 pra não matar performance
-          nodata={0}
-          minHeight={2}
-        />
-      )} */}
 
     </SceneTurnTable>
 
