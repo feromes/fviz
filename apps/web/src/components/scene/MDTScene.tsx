@@ -1,106 +1,102 @@
-import { useLoader } from "@react-three/fiber";
-import { TextureLoader, ShaderMaterial } from "three";
+import { useEffect, useState } from "react";
 import * as THREE from "three";
-import { useMemo } from "react";
+import { flazColor } from "../../utils/flazColor";
 
 type MDTSceneProps = {
   mdtUrl: string;
   size: [number, number];
   displacementScale?: number;
-  heightMin: number;
-  heightMax: number;
+  segments?: number;
 };
 
 export default function MDTScene({
   mdtUrl,
   size,
   displacementScale = 200,
-  heightMin,
-  heightMax,
+  segments = 256,
 }: MDTSceneProps) {
-  if (!size) return null;
+  const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
 
-  // 🔑 mesma escala da nuvem (1 unidade = 12.5 cm)
+  // mesma escala da nuvem (1 unidade = 12.5 cm)
   const SCALE = 1 / 0.125;
 
-  const texture = useLoader(TextureLoader, mdtUrl);
+  useEffect(() => {
+    let cancelled = false;
 
-  texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
-  texture.minFilter = THREE.LinearFilter;
-  texture.magFilter = THREE.LinearFilter;
-  texture.colorSpace = THREE.NoColorSpace;
+    async function build() {
+      // 1️⃣ carregar imagem
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = mdtUrl;
+      await img.decode();
 
-  const material = useMemo(
-    () =>
-      new ShaderMaterial({
-        uniforms: {
-          heightMap: { value: texture },
-          hMin: { value: heightMin },
-          hMax: { value: heightMax },
-          dispScale: { value: displacementScale },
-        },
-        vertexShader: `
-          varying vec2 vUv;
-          uniform sampler2D heightMap;
-          uniform float dispScale;
+      const w = img.width;
+      const h = img.height;
 
-          void main() {
-            vUv = uv;
+      // 2️⃣ canvas para ler pixels
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0);
 
-            float h = texture2D(heightMap, uv).r;
-            vec3 displacedPosition = position + normal * h * dispScale;
+      const { data } = ctx.getImageData(0, 0, w, h);
 
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(displacedPosition, 1.0);
-          }
-        `,
-        fragmentShader: `
-          varying vec2 vUv;
-          uniform sampler2D heightMap;
+      // 3️⃣ geometria
+      const geom = new THREE.PlaneGeometry(
+        size[0],
+        size[1],
+        w - 1,
+        h - 1
+      );
 
-          vec3 terrain(float t) {
-            return mix(
-              mix(
-                vec3(0.2, 0.4, 0.0),   // verde escuro
-                vec3(0.4, 0.6, 0.2),   // verde
-                smoothstep(0.0, 0.4, t)
-              ),
-              mix(
-                vec3(0.6, 0.5, 0.3),   // marrom
-                vec3(1.0, 1.0, 1.0),   // branco
-                smoothstep(0.6, 1.0, t)
-              ),
-              smoothstep(0.4, 1.0, t)
-            );
-          }
+      const pos = geom.attributes.position.array as Float32Array;
+      const colors = new Float32Array(w * h * 3);
 
-          void main() {
-            float h = texture2D(heightMap, vUv).r;
+      // 4️⃣ preencher vértices
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const i = y * w + x;
 
-            // 🌈 colormap correto (0–1)
-            vec3 color = terrain(h);
+          const px = i * 4;
+          const hNorm = data[px] / 255; // grayscale
 
-            // ☀️ hillshade fake (derivadas simples)
-            float dx = dFdx(h);
-            float dy = dFdy(h);
+          // z (deslocamento)
+          pos[i * 3 + 2] = hNorm * displacementScale;
 
-            vec3 normal = normalize(vec3(-dx, -dy, 1.0));
-            vec3 lightDir = normalize(vec3(0.4, 0.6, 1.0));
+          // cor (mesma função do ColorBar)
+          const [r, g, b] = flazColor(hNorm);
 
-            float shade = dot(normal, lightDir);
-            shade = clamp(shade * 0.8 + 0.2, 0.0, 1.0);
+          colors[i * 3 + 0] = r;
+          colors[i * 3 + 1] = g;
+          colors[i * 3 + 2] = b;
+        }
+      }
 
-            gl_FragColor = vec4(color * shade, 1.0);
-          }
-        `,
-        side: THREE.DoubleSide,
-      }),
-    [texture, heightMin, heightMax, displacementScale]
-  );
+      geom.setAttribute(
+        "color",
+        new THREE.Float32BufferAttribute(colors, 3)
+      );
+
+      geom.computeVertexNormals();
+
+      if (!cancelled) setGeometry(geom);
+    }
+
+    build();
+    return () => {
+      cancelled = true;
+    };
+  }, [mdtUrl, size, displacementScale]);
+
+  if (!geometry) return null;
 
   return (
-    <mesh scale={[SCALE, SCALE, 1]}>
-      <planeGeometry args={[size[0], size[1], 256, 256]} />
-      <primitive object={material} attach="material" />
+    <mesh geometry={geometry} scale={[SCALE, SCALE, 1]}>
+      <meshStandardMaterial
+        vertexColors
+        side={THREE.DoubleSide}
+      />
     </mesh>
   );
 }
