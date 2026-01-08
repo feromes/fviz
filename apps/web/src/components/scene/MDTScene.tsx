@@ -15,6 +15,7 @@ export default function MDTScene({
 }: MDTSceneProps) {
   if (!size) return null; // ⛔ nada de WebGL inválido
 
+  const SCALE = 1 / 0.125; // 8
   const texture = useLoader(TextureLoader, mdtUrl);
 
   texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
@@ -23,7 +24,10 @@ export default function MDTScene({
   texture.colorSpace = THREE.NoColorSpace;
 
   return (
-    <mesh rotation={[0, 0, 0]}>
+    <mesh 
+      rotation={[0, 0, 0]}
+      scale={[SCALE, SCALE, 1]}
+    >
       <planeGeometry args={[size[0], size[1], 256, 256]} />
 
       <meshStandardMaterial
