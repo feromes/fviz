@@ -2,11 +2,20 @@ import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import * as THREE from "three";
 
-export default function MDTScene() {
-  const texture = useLoader(
-    TextureLoader,
-    "/api/favela/sao_remo/periodos/2017/mdt.png"
-  );
+type MDTSceneProps = {
+  mdtUrl: string;
+  size?: [number, number];
+  displacementScale?: number;
+};
+
+export default function MDTScene({
+  mdtUrl,
+  size,
+  displacementScale = 200,
+}: MDTSceneProps) {
+  if (!size) return null; // ⛔ nada de WebGL inválido
+
+  const texture = useLoader(TextureLoader, mdtUrl);
 
   texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
   texture.minFilter = THREE.LinearFilter;
@@ -15,13 +24,13 @@ export default function MDTScene() {
 
   return (
     <mesh rotation={[0, 0, 0]}>
-      <planeGeometry args={[3000, 3000, 256, 256]} />
+      <planeGeometry args={[size[0], size[1], 256, 256]} />
 
       <meshStandardMaterial
         map={texture}
         displacementMap={texture}
-        displacementScale={200}
-        alphaMap={texture}   // 🔥 aqui está o truque
+        displacementScale={displacementScale}
+        alphaMap={texture}
         transparent
         side={THREE.DoubleSide}
       />

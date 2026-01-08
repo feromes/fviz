@@ -13,7 +13,7 @@ import { useEffect } from "react";
 import MDTScene from "./MDTScene";
 import MDTSceneVoxel from "./MDTSceneVoxel";
 import { useSceneStore } from "../../state/sceneStore";
-
+import { sizeFromBounds } from "../../utils/mdt";
 
 export default function PointCloudScene() {
   const favelaAtiva = useFavelaStore((s) => s.favelaAtiva);
@@ -62,7 +62,12 @@ export default function PointCloudScene() {
   }
 
   const favela = favelaAtiva;
+  const mdtSize = sizeFromBounds(favela.mdt?.bounds);
   const pointCloudUrl = `/api/favela/${favela.id}/periodos/2017/flaz.arrow`;
+  const mdtUrl = `/api/favela/${favela.id}/periodos/2017/mdt.png`;
+
+  console.log("favela:", favela);
+  console.log("mdt_size:", favela?.mdt_size);
 
   return (
     <Canvas
@@ -86,8 +91,12 @@ export default function PointCloudScene() {
         <PointCloud url={pointCloudUrl} meta={favela} />
       )}
 
-      {scene === "mdt" && (
-        <MDTScene />
+      {scene === "mdt" && mdtSize && (
+        <MDTScene
+          mdtUrl={mdtUrl}
+          size={mdtSize}
+          displacementScale={favela.mdt_scale ?? 200}
+        />
       )}
 
       {/* {scene === "mdt" && (
