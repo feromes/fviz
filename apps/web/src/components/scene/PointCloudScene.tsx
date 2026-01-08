@@ -33,7 +33,7 @@ export default function PointCloudScene() {
 
   const setColorMap = useColorMapStore((s) => s.setColorMap);
   const hideColorMap = useColorMapStore((s) => s.hide);
-  const colorMode = useColorModeStore((s) => s.mode);
+  const colorMode = useColorModeStore((s) => s.colorMode);
 
   useEffect(() => {
     if (!controlsRef.current) return;

@@ -72,7 +72,7 @@ export function PointCloud({ url, meta }) {
 
       geometry.attributes.color.needsUpdate = true;
     }
-  }, [colorMode]);
+  }, [colorMode, geometry]);
 
 
   if (!geometry) return null;
