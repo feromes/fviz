@@ -6,18 +6,18 @@ export function useFavela() {
   const favela = useFavelaStore((s) => s.favelaAtiva);
   const setColorMap = useColorMapStore((s) => s.setColorMap);
 
-  useEffect(() => {
-    if (!favela?.elevation) return;
+  // useEffect(() => {
+  //   if (!favela?.elevation) return;
 
-    // 🔁 inicializa o ColorMap junto com a favela
-    setColorMap({
-      mode: "elevation",
-      min: favela.elevation.min,
-      max: favela.elevation.max,
-      ref: favela.elevation.ref, // "NMM"
-      visible: true,
-    });
-  }, [favela, setColorMap]);
+  //   // 🔁 inicializa o ColorMap junto com a favela
+  //   setColorMap({
+  //     mode: "elevation",
+  //     min: favela.elevation.min,
+  //     max: favela.elevation.max,
+  //     ref: favela.elevation.ref, // "NMM"
+  //     visible: true,
+  //   });
+  // }, [favela, setColorMap]);
 
   if (!favela) return null;
 

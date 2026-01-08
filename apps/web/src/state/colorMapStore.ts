@@ -27,11 +27,26 @@ export const useColorMapStore = create<ColorMapState>((set) => ({
   ref: "",
   colormap: "fviz_geo",
   visible: true,
+
   toggleVisible: () =>
-      set((s) => ({ visible: !s.visible })),
+    set((s) => {
+      console.trace("🎨 toggleVisible()");
+      return { visible: !s.visible };
+    }),
+
   setColorMap: (data) =>
-    set((state) => ({
-      ...state,
-      ...data,
-    })),
+    set((state) => {
+      console.group("🎨 setColorMap");
+      console.log("payload:", data);
+      console.trace("stack:");
+      console.groupEnd();
+      return { ...state, ...data };
+    }),
+
+  hide: () =>
+    set((state) => {
+      console.trace("🎨 hideColorMap()");
+      return { ...state, visible: false };
+    }),
 }));
+

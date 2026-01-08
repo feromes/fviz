@@ -64,19 +64,23 @@ export default function PointCloudScene() {
     if (!favelaAtiva) return;
 
     if (scene === "pointcloud") {
+      if (!favelaAtiva.elevation) return;
+
       setColorMap({
-        min: favelaAtiva.elevation_min ?? favelaAtiva.mdt?.stats.min ?? 0,
-        max: favelaAtiva.elevation_max ?? favelaAtiva.mdt?.stats.max ?? 1,
-        ref: "Elevação (m)",
+        min: favelaAtiva.elevation.min,
+        max: favelaAtiva.elevation.max,
+        ref: `Elevação (${favelaAtiva.elevation.ref})`,
         visible: true,
       });
     }
 
     if (scene === "mdt") {
+      if (!favelaAtiva.mdt?.stats) return;
+
       setColorMap({
-        min: favelaAtiva.mdt?.stats.min ?? 0,
-        max: favelaAtiva.mdt?.stats.max ?? 1,
-        ref: "Elevação (m)",
+        min: favelaAtiva.mdt.stats.min,
+        max: favelaAtiva.mdt.stats.max,
+        ref: "Elevação (MDT)",
         visible: true,
       });
     }
@@ -85,6 +89,7 @@ export default function PointCloudScene() {
       hideColorMap();
     }
   }, [scene, favelaAtiva]);
+
 
   if (!favelaAtiva) {
     console.log("PointCloudScene: favelaAtiva ainda não definida");
