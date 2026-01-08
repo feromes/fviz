@@ -15,6 +15,7 @@ import MDTSceneVoxel from "./MDTSceneVoxel";
 import { useSceneStore } from "../../state/sceneStore";
 import { sizeFromBounds } from "../../utils/mdt";
 import { useColorMapStore } from "../../state/colorMapStore";
+import { useColorModeStore } from "../../state/colorModeStore";
 
 
 export default function PointCloudScene() {
@@ -32,6 +33,7 @@ export default function PointCloudScene() {
 
   const setColorMap = useColorMapStore((s) => s.setColorMap);
   const hideColorMap = useColorMapStore((s) => s.hide);
+  const colorMode = useColorModeStore((s) => s.mode);
 
   useEffect(() => {
     if (!controlsRef.current) return;
@@ -88,7 +90,7 @@ export default function PointCloudScene() {
     if (scene === "none") {
       hideColorMap();
     }
-  }, [scene, favelaAtiva]);
+  }, [scene, favelaAtiva, colorMode]);
 
 
   if (!favelaAtiva) {
