@@ -5,6 +5,8 @@ import { parseArrowPoints } from "../../loaders/parseArrowPoints";
 import FitCameraToPoints from "./FitCameraToPoints";
 import { useColorModeStore } from "../../state/colorModeStore";
 import * as THREE from "three";
+import { loadArrowColumn } from "../../loaders/loadArrowColumn";
+import { hagToColors } from "../../utils/hagToColors";
 
 
 export function PointCloud({ url, meta }) {
@@ -42,7 +44,6 @@ export function PointCloud({ url, meta }) {
 
     const geometry = geometryRef.current;
 
-    // 🔵 VOLTA PARA ELEVATION
     if (colorMode === "elevation") {
       if (!originalColorRef.current) return;
 
@@ -50,29 +51,33 @@ export function PointCloud({ url, meta }) {
         "color",
         new THREE.BufferAttribute(originalColorRef.current, 3)
       );
-
       geometry.attributes.color.needsUpdate = true;
     }
 
-    // 🔴 MODO HAG (teste simples por enquanto)
     if (colorMode === "hag") {
-      const count = geometry.attributes.position.count;
-      const colors = new Float32Array(count * 3);
+      async function applyHag() {
+        const hag = await loadArrowColumn(
+          `/api/favela/${meta.id}/periodos/2017/hag_flaz.arrow`,
+          "hag_colormap"
+        );
 
-      for (let i = 0; i < count; i++) {
-        colors[i * 3 + 0] = 1.0;
-        colors[i * 3 + 1] = 0.0;
-        colors[i * 3 + 2] = 0.0;
+        const colors = hagToColors(
+          hag,
+          meta.hag.min,
+          meta.hag.max
+        );
+
+        geometry.setAttribute(
+          "color",
+          new THREE.BufferAttribute(colors, 3)
+        );
+        geometry.attributes.color.needsUpdate = true;
       }
 
-      geometry.setAttribute(
-        "color",
-        new THREE.BufferAttribute(colors, 3)
-      );
-
-      geometry.attributes.color.needsUpdate = true;
+      applyHag();
     }
   }, [colorMode, geometry]);
+
 
 
   if (!geometry) return null;
