@@ -12,18 +12,6 @@ export function PointCloud({ url, meta }) {
     async function run() {
       const table = await loadArrow(url);
       const { geometry, center } = parseArrowPoints(table, meta);
-
-      // Auto-fit básico
-      // const [xmin, xmax, ymin, ymax, zmin, zmax] = meta.bb_normalizado;
-      // const maxDim = Math.max(xmax - xmin, ymax - ymin, zmax - zmin);
-      // const dist = maxDim * 1.5;
-
-    //   camera.position.set(0, 0, dist);
-    //   camera.lookAt(0, 0, 0);
-
-      // camera.position.set(0, 0, 0);
-      // camera.lookAt(0, 0, 0);
-
       setGeometry(geometry);
     }
 
@@ -42,7 +30,5 @@ export function PointCloud({ url, meta }) {
       />
       <FitCameraToPoints pointsGeometry={geometry} />
     </points>
-
-
   );
 }
