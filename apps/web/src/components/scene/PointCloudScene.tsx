@@ -14,6 +14,8 @@ import MDTScene from "./MDTScene";
 import MDTSceneVoxel from "./MDTSceneVoxel";
 import { useSceneStore } from "../../state/sceneStore";
 import { sizeFromBounds } from "../../utils/mdt";
+import { useColorMapStore } from "../../state/colorMapStore";
+
 
 export default function PointCloudScene() {
   const favelaAtiva = useFavelaStore((s) => s.favelaAtiva);
@@ -27,6 +29,9 @@ export default function PointCloudScene() {
   const cameraTick = useSceneControlStore(s => s.cameraTick);
 
   const scene = useSceneStore((s) => s.scene);
+
+  const setColorMap = useColorMapStore((s) => s.setColorMap);
+  const hideColorMap = useColorMapStore((s) => s.hide);
 
   useEffect(() => {
     if (!controlsRef.current) return;
@@ -55,6 +60,31 @@ export default function PointCloudScene() {
 
   }, [cameraMode, cameraTick]); // 🔥 TICK É A CHAVE
 
+  useEffect(() => {
+    if (!favelaAtiva) return;
+
+    if (scene === "pointcloud") {
+      setColorMap({
+        min: favelaAtiva.elevation_min ?? favelaAtiva.mdt?.stats.min ?? 0,
+        max: favelaAtiva.elevation_max ?? favelaAtiva.mdt?.stats.max ?? 1,
+        ref: "Elevação (m)",
+        visible: true,
+      });
+    }
+
+    if (scene === "mdt") {
+      setColorMap({
+        min: favelaAtiva.mdt?.stats.min ?? 0,
+        max: favelaAtiva.mdt?.stats.max ?? 1,
+        ref: "Elevação (m)",
+        visible: true,
+      });
+    }
+
+    if (scene === "none") {
+      hideColorMap();
+    }
+  }, [scene, favelaAtiva]);
 
   if (!favelaAtiva) {
     console.log("PointCloudScene: favelaAtiva ainda não definida");
