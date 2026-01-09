@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import "./styles/leaflet.css";
 import * as THREE from "three";
@@ -68,6 +68,14 @@ export default function App() {
     window.addEventListener("resize", setVh);
     return () => window.removeEventListener("resize", setVh);
   }, []);
+
+  useEffect(() => {
+    if (favelaAtiva) {
+      document.title = `FVIZ - ${favelaAtiva.nome}`;
+    } else {
+      document.title = "FVIZ";
+    }
+  }, [favelaAtiva]);
 
   // const pointCloudUrl = favelaAtiva
   //   ? `/api/favela/${favelaAtiva.id}/periodos/2017/flaz.arrow`

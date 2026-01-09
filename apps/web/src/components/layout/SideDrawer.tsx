@@ -5,6 +5,7 @@ import MDTIcon from "../../assets/icons/MDT.svg";
 import ClassificacaoIcon from "../../assets/icons/Classificacao.svg";
 import HAGIcon from "../../assets/icons/HAG.svg";
 import DeltaIcon from "../../assets/icons/Delta.svg";
+import Vielas from "../../assets/icons/Vielas.svg";
 
 import HamburguerMenu from "../../assets/icons/HamburguerMenu.svg";
 
@@ -56,8 +57,15 @@ const LAYERS: LayerItem[] = [
     enabled: true,
   },
   {
+    id: "footpath",
+    short: "Vielas",
+    title: "Modelo preliminar do mapeamento de vielas",
+    icon: Vielas,
+    enabled: false,
+  },
+  {
     id: "delta",
-    short: "Delta",
+    short: "Delta MDS",
     title: "Diferença entre levantamentos sucessivos",
     icon: DeltaIcon,
     enabled: false,
