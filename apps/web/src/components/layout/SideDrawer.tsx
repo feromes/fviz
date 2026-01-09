@@ -47,7 +47,7 @@ const LAYERS: LayerItem[] = [
     short: "Classificação",
     title: "Classes originais segundo ASPRS",
     icon: ClassificacaoIcon,
-    enabled: false,
+    enabled: true,
   },
   {
     id: "hag",
@@ -136,6 +136,12 @@ export default function SideDrawer() {
                   setScene("pointcloud");    // continua sendo pointcloud
                   setColorMode("hag");       // só muda a “tinta”
                   toggleMenu();
+                }
+
+                if (layer.id === "classificacao") {
+                  setScene("pointcloud");
+                  setColorMode("classification");
+                  closeMenu();
                 }
               }}
               className={`

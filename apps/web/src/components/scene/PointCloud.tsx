@@ -7,6 +7,7 @@ import { useColorModeStore } from "../../state/colorModeStore";
 import * as THREE from "three";
 import { loadArrowColumn } from "../../loaders/loadArrowColumn";
 import { hagToColors } from "../../utils/hagToColors";
+import { classificationToColors } from "../../utils/classificationToColors";
 
 
 export function PointCloud({ url, meta }) {
@@ -75,6 +76,44 @@ export function PointCloud({ url, meta }) {
       }
 
       applyHag();
+    }
+
+    // if (colorMode === "classification") {
+    //   const count =
+    //     geometry.attributes.position.count;
+
+    //   const colors = new Float32Array(count * 3);
+
+    //   for (let i = 0; i < count; i++) {
+    //     colors[i * 3 + 0] = 1.0; // R
+    //     colors[i * 3 + 1] = 0.0; // G
+    //     colors[i * 3 + 2] = 0.0; // B
+    //   }
+
+    //   geometry.setAttribute(
+    //     "color",
+    //     new THREE.BufferAttribute(colors, 3)
+    //   );
+    //   geometry.attributes.color.needsUpdate = true;
+    // }
+
+    if (colorMode === "classification") {
+      async function applyClassification() {
+        const classes = await loadArrowColumn(
+          `/api/favela/${meta.id}/periodos/2017/class_flaz.arrow`,
+          "classification"
+        );
+
+        const colors = classificationToColors(classes);
+
+        geometry.setAttribute(
+          "color",
+          new THREE.BufferAttribute(colors, 3)
+        );
+        geometry.attributes.color.needsUpdate = true;
+      }
+
+      applyClassification();
     }
   }, [colorMode, geometry]);
 

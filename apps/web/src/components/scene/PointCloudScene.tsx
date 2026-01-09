@@ -93,7 +93,6 @@ export default function PointCloudScene() {
       }
 
       if (colorMode === "hag") {
-        console.log("SETANDO HAG");
         if (!favelaAtiva.hag) return;
 
         setColorMap({
