@@ -4,7 +4,7 @@ import { flazColor } from "../../utils/flazColor";
 
 
 export default function ColorBar() {
-  const { min, max, ref, visible } = useColorMapStore();
+  const { min, max, ref, visible, mode } = useColorMapStore();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const height = 240;
@@ -36,7 +36,7 @@ export default function ColorBar() {
     }
 
     ctx.putImageData(img, 0, 0);
-}, [visible, min, max]);
+}, [visible, min, max, ref, mode]);
 
 
   if (!visible) return null;
@@ -51,7 +51,7 @@ export default function ColorBar() {
       className="absolute right-4 bottom-20 z-20 pointer-events-none select-none"
     >
       <div className="text-[11px] text-neutral-700 mb-1">
-        Elevação (m)
+        {ref}
       </div>
 
       <div className="flex gap-2">

@@ -11,7 +11,6 @@ import { useSceneControlStore } from "../../state/sceneControlStore";
 import { useEffect } from "react";
 
 import MDTScene from "./MDTScene";
-import MDTSceneVoxel from "./MDTSceneVoxel";
 import { useSceneStore } from "../../state/sceneStore";
 import { sizeFromBounds } from "../../utils/mdt";
 import { useColorMapStore } from "../../state/colorMapStore";
@@ -65,33 +64,48 @@ export default function PointCloudScene() {
   useEffect(() => {
     if (!favelaAtiva) return;
 
-    if (scene === "pointcloud") {
-      if (!favelaAtiva.elevation) return;
-
-      setColorMap({
-        min: favelaAtiva.elevation.min,
-        max: favelaAtiva.elevation.max,
-        ref: `Elevação (${favelaAtiva.elevation.ref})`,
-        visible: true,
-      });
-    }
-
+    // MDT é cena própria
     if (scene === "mdt") {
       if (!favelaAtiva.mdt?.stats) return;
 
       setColorMap({
+        mode: "mdt",
         min: favelaAtiva.mdt.stats.min,
         max: favelaAtiva.mdt.stats.max,
         ref: "Elevação (MDT)",
         visible: true,
       });
+      return;
     }
 
-    if (scene === "none") {
-      hideColorMap();
-    }
-  }, [scene, favelaAtiva, colorMode]);
+    // PointCloud com variação de tinta
+    if (scene === "pointcloud") {
+      if (colorMode === "elevation") {
+        if (!favelaAtiva.elevation) return;
 
+        setColorMap({
+          mode: "elevation",
+          min: favelaAtiva.elevation.min,
+          max: favelaAtiva.elevation.max,
+          ref: `Elevação (${favelaAtiva.elevation.ref})`,
+          visible: true,
+        });
+      }
+
+      if (colorMode === "hag") {
+        console.log("SETANDO HAG");
+        if (!favelaAtiva.hag) return;
+
+        setColorMap({
+          mode: "hag",
+          min: favelaAtiva.hag.min,
+          max: favelaAtiva.hag.max,
+          ref: `Altura acima do terreno (${favelaAtiva.hag.unit})`,
+          visible: true,
+        });
+      }
+    }
+  }, [scene, colorMode, favelaAtiva, setColorMap]);
 
   if (!favelaAtiva) {
     return null;

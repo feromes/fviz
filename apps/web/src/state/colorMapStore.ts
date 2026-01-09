@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type ColorMapMode = "elevation"; // depois: "hag", "risk", etc.
+export type ColorMapMode = "elevation" | "mdt" | "hag"; // depois: "hag", "risk", etc.
 
 type ColorMapState = {
   mode: ColorMapMode;
@@ -12,6 +12,7 @@ type ColorMapState = {
   toggleVisible: () => void;
 
   setColorMap: (cfg: {
+    mode: "mdt";
     min: number;
     max: number;
     ref: string;

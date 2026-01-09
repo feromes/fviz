@@ -4,6 +4,12 @@ import { create } from "zustand";
 /* Types                                                              */
 /* ------------------------------------------------------------------ */
 
+export type HAGMeta = {
+  min: number;
+  max: number;
+  unit: string;
+};
+
 export type MDTMeta = {
   type: "MDT";
   bounds: [number, number, number, number];
@@ -40,6 +46,8 @@ export type FavelaResumo = {
 
   // 🔽 MDT metadata (lazy-loaded)
   mdt?: MDTMeta;
+
+  hag?: HAGMeta;
 };
 
 type FavelaState = {
