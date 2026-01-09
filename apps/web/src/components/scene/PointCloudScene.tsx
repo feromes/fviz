@@ -15,6 +15,7 @@ import { useSceneStore } from "../../state/sceneStore";
 import { sizeFromBounds } from "../../utils/mdt";
 import { useColorMapStore } from "../../state/colorMapStore";
 import { useColorModeStore } from "../../state/colorModeStore";
+import { color } from "three/tsl";
 
 
 export default function PointCloudScene() {
@@ -100,6 +101,14 @@ export default function PointCloudScene() {
           min: favelaAtiva.hag.min,
           max: favelaAtiva.hag.max,
           ref: `Altura acima do terreno (${favelaAtiva.hag.unit})`,
+          visible: true,
+        });
+      }
+
+      if (colorMode === "classification") {
+        setColorMap({
+          mode: "classification",
+          ref: "Classificação (ASPRS)",
           visible: true,
         });
       }
