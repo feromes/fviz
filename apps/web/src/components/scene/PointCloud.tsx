@@ -8,7 +8,7 @@ import * as THREE from "three";
 import { loadArrowColumn } from "../../loaders/loadArrowColumn";
 import { hagToColors } from "../../utils/hagToColors";
 import { classificationToColors } from "../../utils/classificationToColors";
-
+import { vvvToColors } from "../../utils/vvvToColors";
 
 export function PointCloud({ url, meta }) {
   const { camera } = useThree();
@@ -115,6 +115,26 @@ export function PointCloud({ url, meta }) {
 
       applyClassification();
     }
+
+    if (colorMode === "vvv") {
+      async function applyVVV() {
+        const vvv = await loadArrowColumn(
+          `/api/favela/${meta.id}/periodos/2017/via_viela_vazio_flaz.arrow`,
+          "via_viela_vazio"
+        );
+
+        const colors = vvvToColors(vvv);
+
+        geometry.setAttribute(
+          "color",
+          new THREE.BufferAttribute(colors, 3)
+        );
+        geometry.attributes.color.needsUpdate = true;
+      }
+
+      applyVVV();
+    }
+
   }, [colorMode, geometry]);
 
 

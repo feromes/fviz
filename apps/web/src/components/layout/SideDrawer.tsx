@@ -61,7 +61,7 @@ const LAYERS: LayerItem[] = [
     short: "Vielas",
     title: "Modelo preliminar do mapeamento de vielas",
     icon: Vielas,
-    enabled: false,
+    enabled: true,
   },
   {
     id: "delta",
@@ -141,6 +141,12 @@ export default function SideDrawer() {
                 if (layer.id === "classificacao") {
                   setScene("pointcloud");
                   setColorMode("classification");
+                  closeMenu();
+                }
+
+                if (layer.id === "footpath") {
+                  setScene("pointcloud");
+                  setColorMode("vvv");
                   closeMenu();
                 }
               }}
