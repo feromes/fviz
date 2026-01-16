@@ -16,6 +16,7 @@ export function PointCloud({ url, meta }) {
   const colorMode = useColorModeStore((s) => s.colorMode);
   const geometryRef = useRef<THREE.BufferGeometry | null>(null);
   const originalColorRef = useRef<Float32Array | null>(null);
+  const [geometryVVV, setGeometryVVV] = useState<THREE.BufferGeometry | null>(null);
 
 
   useEffect(() => {
@@ -123,17 +124,45 @@ export function PointCloud({ url, meta }) {
           "via_viela_vazio"
         );
 
-        const colors = vvvToColors(vvv);
+        const base = geometryRef.current;
+        if (!base) return;
 
-        geometry.setAttribute(
-          "color",
-          new THREE.BufferAttribute(colors, 3)
+        const positions = base.getAttribute("position").array as Float32Array;
+        const colors = base.getAttribute("color").array as Float32Array;
+
+        const vPositions: number[] = [];
+        const vColors: number[] = [];
+
+        for (let i = 0; i < vvv.length; i++) {
+          if (vvv[i] > 0) {
+            // posição
+            vPositions.push(
+              positions[i * 3 + 0],
+              positions[i * 3 + 1],
+              positions[i * 3 + 2]
+            );
+
+            // cor preta
+            vColors.push(0, 0, 0);
+          }
+        }
+
+        const g = new THREE.BufferGeometry();
+        g.setAttribute(
+          "position",
+          new THREE.Float32BufferAttribute(vPositions, 3)
         );
-        geometry.attributes.color.needsUpdate = true;
+        g.setAttribute(
+          "color",
+          new THREE.Float32BufferAttribute(vColors, 3)
+        );
+
+        setGeometryVVV(g);
       }
 
       applyVVV();
     }
+
 
   }, [colorMode, geometry]);
 
@@ -142,14 +171,30 @@ export function PointCloud({ url, meta }) {
   if (!geometry) return null;
 
   return (
-    <points geometry={geometry}>
-      <pointsMaterial 
-        size={3} 
-        vertexColors
-        transparent={true}
-        opacity={0.5} 
-      />
-      <FitCameraToPoints pointsGeometry={geometry} />
-    </points>
+    <>
+      {/* Layer base — contexto */}
+      <points geometry={geometry}>
+        <pointsMaterial
+          size={2}
+          vertexColors
+          transparent
+          opacity={0.7}
+        />
+        <FitCameraToPoints pointsGeometry={geometry} />
+      </points>
+
+      {/* Layer VVV — destaque */}
+      {colorMode === "vvv" && geometryVVV && (
+        <points geometry={geometryVVV}>
+          <pointsMaterial
+            size={6}
+            vertexColors
+            transparent={false}
+            opacity={1.0}
+          />
+        </points>
+      )}
+    </>
   );
+
 }
