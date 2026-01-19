@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import Logo from "../../assets/icons/Logo.svg";
 
 import MDSIcon from "../../assets/icons/MDS.svg";
@@ -6,6 +8,7 @@ import ClassificacaoIcon from "../../assets/icons/Classificacao.svg";
 import HAGIcon from "../../assets/icons/HAG.svg";
 import DeltaIcon from "../../assets/icons/Delta.svg";
 import Vielas from "../../assets/icons/Vielas.svg";
+import PeriodIcon from "../../assets/icons/Periodo.svg";
 
 import HamburguerMenu from "../../assets/icons/HamburguerMenu.svg";
 
@@ -79,7 +82,9 @@ export default function SideDrawer() {
   const scene = useSceneStore((s) => s.scene);
   const closeMenu = useUIStore((s) => s.closeMenu);
   const setColorMode = useColorModeStore((s) => s.setColorMode);
+  const [period, setPeriod] = useState<2017 | 2020 | 2024>(2017);
 
+  
   return (
     <aside
       className={`
@@ -107,6 +112,40 @@ export default function SideDrawer() {
           alt="FVIZ"
           className="h-[44px] w-auto select-none"
         />
+      </div>
+
+      {/* SELETOR DE PERÍODO */}
+      <div className="px-4 py-3 border-b border-neutral-300">
+        <div className="flex items-center gap-2">
+          {[2017, 2020, 2024].map((year) => {
+            const active = period === year;
+
+            return (
+              <button
+                key={year}
+                onClick={() => setPeriod(year as 2017 | 2020 | 2024)}
+                className={`
+                  flex-1 flex items-center justify-center gap-2
+                  px-2 py-2 rounded-md
+                  text-sm font-semibold
+                  transition
+                  ${
+                    active
+                      ? "bg-white shadow-sm"
+                      : "bg-neutral-200 hover:bg-neutral-300"
+                  }
+                `}
+              >
+                <img
+                  src={PeriodIcon}
+                  alt="Período"
+                  className="h-4 w-4 opacity-70"
+                />
+                <span>{year}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* LISTA DE LAYERS */}
