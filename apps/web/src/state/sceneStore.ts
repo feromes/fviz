@@ -4,10 +4,17 @@ export type SceneType = "pointcloud" | "mdt";
 
 interface SceneState {
   scene: SceneType;
-  setScene: (scene: SceneType) => void;
+  sceneTitle?: string;
+  setScene: (scene: SceneType, title?: string) => void;
 }
 
 export const useSceneStore = create<SceneState>((set) => ({
   scene: "pointcloud",
-  setScene: (scene) => set({ scene }),
+  sceneTitle: undefined,
+
+  setScene: (scene, title) =>
+    set({
+      scene,
+      sceneTitle: title,
+    }),
 }));

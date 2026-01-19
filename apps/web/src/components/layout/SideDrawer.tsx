@@ -122,30 +122,30 @@ export default function SideDrawer() {
                 if (!layer.enabled) return;
 
                 if (layer.id === "mdt") {
-                  setScene("mdt");
+                  setScene("mdt", "MDT - Modelo Digital de Terreno");
                   closeMenu();
                 }
 
                 if (layer.id === "mds") {
-                  setScene("pointcloud");
+                  setScene("pointcloud", "MDS - Modelo Digital de Superfície");
                   setColorMode("elevation"); // MDS = cor por elevação (por enquanto)
                   closeMenu();
                 }
 
                 if (layer.id === "hag") {
-                  setScene("pointcloud");    // continua sendo pointcloud
+                  setScene("pointcloud", "ARS - Altura em relação ao solo");    // continua sendo pointcloud
                   setColorMode("hag");       // só muda a “tinta”
                   toggleMenu();
                 }
 
                 if (layer.id === "classificacao") {
-                  setScene("pointcloud");
+                  setScene("pointcloud", "Classificação ASPRS");
                   setColorMode("classification");
                   closeMenu();
                 }
 
                 if (layer.id === "footpath") {
-                  setScene("pointcloud");
+                  setScene("pointcloud", "Vielas, Vias e Vazios");
                   setColorMode("vvv");
                   closeMenu();
                 }
