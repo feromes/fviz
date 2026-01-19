@@ -1,5 +1,6 @@
 import type { FavelaResumo } from "../../state/favelaStore";
 import { useSceneStore } from "../../state/sceneStore";
+import { usePeriodStore } from "../../state/periodStore";
 
 type DistanceRef =
   | { type: "se" }
@@ -21,6 +22,7 @@ export default function FavelaCard({
 }: FavelaCardProps) {
   const finalDistanceM = distanceM ?? favela.dist_se_m;
   const finalRef: DistanceRef = distanceRef ?? { type: "se" };
+  const period = usePeriodStore((s) => s.period);
 
   const km =
     finalDistanceM != null
@@ -62,6 +64,9 @@ export default function FavelaCard({
         {/* Linha principal */}
         <span className="text-sm font-semibold text-gray-900">
           {favela.nome}
+          <span className="ml-1 font-normal text-gray-500">
+            ({period})
+          </span>
           <span className="mx-1 opacity-40">|</span>
           <span className="font-normal text-gray-700">
             {sceneLabel}

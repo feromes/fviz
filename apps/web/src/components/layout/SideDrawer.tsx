@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import Logo from "../../assets/icons/Logo.svg";
 
 import MDSIcon from "../../assets/icons/MDS.svg";
@@ -9,6 +7,8 @@ import HAGIcon from "../../assets/icons/HAG.svg";
 import DeltaIcon from "../../assets/icons/Delta.svg";
 import Vielas from "../../assets/icons/Vielas.svg";
 import PeriodIcon from "../../assets/icons/Periodo.svg";
+
+import { usePeriodStore } from "../../state/periodStore";
 
 import HamburguerMenu from "../../assets/icons/HamburguerMenu.svg";
 
@@ -82,9 +82,9 @@ export default function SideDrawer() {
   const scene = useSceneStore((s) => s.scene);
   const closeMenu = useUIStore((s) => s.closeMenu);
   const setColorMode = useColorModeStore((s) => s.setColorMode);
-  const [period, setPeriod] = useState<2017 | 2020 | 2024>(2017);
+  const period = usePeriodStore((s) => s.period);
+  const setPeriod = usePeriodStore((s) => s.setPeriod);
 
-  
   return (
     <aside
       className={`
@@ -123,7 +123,10 @@ export default function SideDrawer() {
             return (
               <button
                 key={year}
-                onClick={() => setPeriod(year as 2017 | 2020 | 2024)}
+                onClick={() => {
+                  setPeriod(year as 2017 | 2020 | 2024);
+                  closeMenu();
+                }}
                 className={`
                   flex-1 flex items-center justify-center gap-2
                   px-2 py-2 rounded-md
