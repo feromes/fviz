@@ -10,7 +10,7 @@ interface SceneState {
 
 export const useSceneStore = create<SceneState>((set) => ({
   scene: "pointcloud",
-  sceneTitle: undefined,
+  sceneTitle: "MDS - Modelo Digital de Superfície",
 
   setScene: (scene, title) =>
     set({
