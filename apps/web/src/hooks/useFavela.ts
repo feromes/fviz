@@ -1,6 +1,5 @@
-import { useEffect } from "react";
+
 import { useFavelaStore } from "../state/favelaStore";
-import { useColorMapStore } from "../state/colorMapStore";
 import { usePeriodStore } from "../state/periodStore";
 
 
