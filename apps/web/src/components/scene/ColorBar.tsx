@@ -47,7 +47,6 @@ export default function ColorBar() {
     return min + a * (max - min);
   }).reverse();
 
-  console.log("ColorBar render", { mode }); 
   
   if (mode === "classification") {
     return (

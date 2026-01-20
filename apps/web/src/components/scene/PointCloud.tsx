@@ -19,9 +19,6 @@ export function PointCloud({ url, meta }) {
   const [geometryVVV, setGeometryVVV] = useState<THREE.BufferGeometry | null>(null);
 
 
-  useEffect(() => {
-    console.log("🎨 colorMode atual:", colorMode);
-  }, [colorMode]);
 
   useEffect(() => {
     async function run() {
