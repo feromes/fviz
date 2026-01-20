@@ -8,6 +8,6 @@ type PeriodState = {
 };
 
 export const usePeriodStore = create<PeriodState>((set) => ({
-  period: 2024, // default
+  period: 2017, // default
   setPeriod: (period) => set({ period }),
 }));

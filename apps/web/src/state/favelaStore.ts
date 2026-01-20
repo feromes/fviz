@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { usePeriodStore } from "./periodStore";
 
 /* ------------------------------------------------------------------ */
 /* Types                                                              */
@@ -62,14 +63,31 @@ type FavelaState = {
 /* Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
-async function loadMDTMeta(favelaId: string): Promise<MDTMeta | null> {
+async function loadMDTMeta(
+  favelaId: string,
+  period: number
+): Promise<MDTMeta | null> {
   try {
     const res = await fetch(
-      `/api/favela/${favelaId}/periodos/2017/mdt.json`
+      `/api/favela/${favelaId}/periodos/${period}/mdt.json`
     );
+
     if (!res.ok) return null;
+
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      console.warn(
+        `[FVIZ] MDT inválido para ${favelaId} (${period}) — content-type: ${contentType}`
+      );
+      return null;
+    }
+
     return await res.json();
-  } catch {
+  } catch (err) {
+    console.warn(
+      `[FVIZ] Erro ao carregar MDT de ${favelaId} (${period})`,
+      err
+    );
     return null;
   }
 }
@@ -84,11 +102,56 @@ export const useFavelaStore = create<FavelaState>((set, get) => ({
 
   /**
    * Carrega o catálogo de favelas
-   * e define uma favela inicial
+   * conforme o período ativo
    */
   async loadFavelas() {
-    const res = await fetch("/api/favelas.json");
-    const data: FavelaResumo[] = await res.json();
+    const period = usePeriodStore.getState().period;
+    const url = `/api/favelas_${period}.json`;
+
+    console.log(`[FVIZ] Carregando catálogo: ${url}`);
+
+    let res: Response;
+
+    try {
+      res = await fetch(url);
+    } catch (err) {
+      console.warn(
+        `[FVIZ] Falha de rede ao carregar favelas (${period})`,
+        err
+      );
+      set({ favelas: [], favelaAtiva: null });
+      return;
+    }
+
+    if (!res.ok) {
+      console.warn(
+        `[FVIZ] Nenhum catálogo encontrado para o período ${period}`
+      );
+      set({ favelas: [], favelaAtiva: null });
+      return;
+    }
+
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      console.warn(
+        `[FVIZ] Resposta inválida para favelas_${period}.json — content-type: ${contentType}`
+      );
+      set({ favelas: [], favelaAtiva: null });
+      return;
+    }
+
+    let data: FavelaResumo[];
+
+    try {
+      data = await res.json();
+    } catch (err) {
+      console.warn(
+        `[FVIZ] Erro ao interpretar JSON de favelas_${period}.json`,
+        err
+      );
+      set({ favelas: [], favelaAtiva: null });
+      return;
+    }
 
     set({ favelas: data });
 
@@ -97,9 +160,12 @@ export const useFavelaStore = create<FavelaState>((set, get) => ({
       data[0] ??
       null;
 
-    if (!initial) return;
+    if (!initial) {
+      set({ favelaAtiva: null });
+      return;
+    }
 
-    const mdt = await loadMDTMeta(initial.id);
+    const mdt = await loadMDTMeta(initial.id, period);
 
     set({
       favelaAtiva: {
@@ -111,13 +177,15 @@ export const useFavelaStore = create<FavelaState>((set, get) => ({
 
   /**
    * Seleciona uma favela pelo id
-   * e carrega seu MDT metadata
+   * respeitando o período ativo
    */
   async selectFavela(id) {
+    const period = usePeriodStore.getState().period;
     const favela = get().favelas.find(f => f.id === id);
+
     if (!favela) return;
 
-    const mdt = await loadMDTMeta(favela.id);
+    const mdt = await loadMDTMeta(favela.id, period);
 
     set({
       favelaAtiva: {

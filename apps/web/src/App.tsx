@@ -21,6 +21,7 @@ import { useSceneControlStore } from "./state/sceneControlStore";
 import { useFavela } from "./hooks/useFavela";
 
 import PointCloudScene from "./components/scene/PointCloudScene";
+import { usePeriodStore } from "./state/periodStore";
 
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
   const clearOverlay = useOverlayStore((s) => s.clearOverlay);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const period = usePeriodStore((s) => s.period);
 
   const loadFavelas = useFavelaStore((s) => s.loadFavelas);
   const favelas = useFavelaStore((s) => s.favelas);
@@ -54,7 +56,7 @@ export default function App() {
 
   useEffect(() => {
     loadFavelas();
-  }, []);
+  }, [period]);
 
   // 🔧 viewport height real
   useEffect(() => {
