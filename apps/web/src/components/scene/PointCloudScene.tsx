@@ -125,8 +125,6 @@ export default function PointCloudScene() {
 
   const favela = favelaAtiva;
   const mdtSize = sizeFromBounds(favela.mdt?.bounds);
-  // const pointCloudUrl = `/api/favela/${favela.id}/periodos/2017/flaz.arrow`;
-  // const mdtUrl = `/api/favela/${favela.id}/periodos/2017/mdt.png`;
   const pointCloudUrl = `/api/favela/${favela.id}/periodos/${period}/flaz.arrow`;
   const mdtUrl = `/api/favela/${favela.id}/periodos/${period}/mdt.png`;
   const mdtStats = favela.mdt?.stats;
@@ -164,6 +162,7 @@ export default function PointCloudScene() {
           key={`${favela.id}-${period}`}
           url={pointCloudUrl}
           meta={favela}
+          period={period}
         />
       )}
 

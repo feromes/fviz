@@ -10,7 +10,7 @@ import { hagToColors } from "../../utils/hagToColors";
 import { classificationToColors } from "../../utils/classificationToColors";
 import { vvvToColors } from "../../utils/vvvToColors";
 
-export function PointCloud({ url, meta }) {
+export function PointCloud({ url, meta, period }) {
   const { camera } = useThree();
   const [geometry, setGeometry] = useState(null);
   const colorMode = useColorModeStore((s) => s.colorMode);
@@ -56,7 +56,7 @@ export function PointCloud({ url, meta }) {
     if (colorMode === "hag") {
       async function applyHag() {
         const hag = await loadArrowColumn(
-          `/api/favela/${meta.id}/periodos/2017/hag_flaz.arrow`,
+          `/api/favela/${meta.id}/periodos/${period}/hag_flaz.arrow`,
           "hag_colormap"
         );
 
@@ -98,7 +98,7 @@ export function PointCloud({ url, meta }) {
     if (colorMode === "classification") {
       async function applyClassification() {
         const classes = await loadArrowColumn(
-          `/api/favela/${meta.id}/periodos/2017/class_flaz.arrow`,
+          `/api/favela/${meta.id}/periodos/${period}/class_flaz.arrow`,
           "classification"
         );
 
@@ -117,7 +117,7 @@ export function PointCloud({ url, meta }) {
     if (colorMode === "vvv") {
       async function applyVVV() {
         const vvv = await loadArrowColumn(
-          `/api/favela/${meta.id}/periodos/2017/via_viela_vazio_flaz.arrow`,
+          `/api/favela/${meta.id}/periodos/${period}/via_viela_vazio_flaz.arrow`,
           "via_viela_vazio"
         );
 
@@ -161,7 +161,7 @@ export function PointCloud({ url, meta }) {
     }
 
 
-  }, [colorMode, geometry]);
+  }, [colorMode, geometry, period]);
 
 
 

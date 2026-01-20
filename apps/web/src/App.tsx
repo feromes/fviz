@@ -79,38 +79,6 @@ export default function App() {
     }
   }, [favelaAtiva]);
 
-  // const pointCloudUrl = favelaAtiva
-  //   ? `/api/favela/${favelaAtiva.id}/periodos/2017/flaz.arrow`
-  //   : null;
-
-  // function resetSceneRotation() {
-  //   if (!sceneRef.current) return;
-  //   sceneRef.current.rotation.set(0, 0, 0);
-  // }
-
-  // function handleReset3D() {
-  //   setTurnTable(false);
-  //   resetSceneRotation();
-  //   controlsRef.current?.reset();
-  // }
-
-  // function handleTopView() {
-  //   setTurnTable(false);
-  //   resetSceneRotation();
-
-  //   const controls = controlsRef.current;
-  //   if (!controls) return;
-
-  //   const camera = controls.object as THREE.PerspectiveCamera;
-  //   const target = controls.target as THREE.Vector3;
-  //   const distance = camera.position.distanceTo(target);
-
-  //   camera.position.set(target.x, target.y, target.z + distance);
-  //   camera.up.set(0, 1, 0);
-  //   camera.lookAt(target);
-  //   controls.update();
-  // }
-
   return (
     <div className="relative w-screen h-screen overflow-hidden">
 
