@@ -155,10 +155,16 @@ export const useFavelaStore = create<FavelaState>((set, get) => ({
 
     set({ favelas: data });
 
+    const previousFavelaId = get().favelaAtiva?.id ?? null;
+
     const initial =
+      (previousFavelaId
+        ? data.find(f => f.id === previousFavelaId)
+        : null) ??
       data.find(f => f.id === "sao_remo") ??
       data[0] ??
       null;
+
 
     if (!initial) {
       set({ favelaAtiva: null });
