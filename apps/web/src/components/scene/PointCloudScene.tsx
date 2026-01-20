@@ -17,6 +17,8 @@ import { useColorMapStore } from "../../state/colorMapStore";
 import { useColorModeStore } from "../../state/colorModeStore";
 import { color } from "three/tsl";
 
+import { usePeriodStore } from "../../state/periodStore";
+
 
 export default function PointCloudScene() {
   const favelaAtiva = useFavelaStore((s) => s.favelaAtiva);
@@ -34,6 +36,8 @@ export default function PointCloudScene() {
   const setColorMap = useColorMapStore((s) => s.setColorMap);
   const hideColorMap = useColorMapStore((s) => s.hide);
   const colorMode = useColorModeStore((s) => s.colorMode);
+  const period = usePeriodStore((s) => s.period);
+
 
   useEffect(() => {
     if (!controlsRef.current) return;
@@ -121,8 +125,10 @@ export default function PointCloudScene() {
 
   const favela = favelaAtiva;
   const mdtSize = sizeFromBounds(favela.mdt?.bounds);
-  const pointCloudUrl = `/api/favela/${favela.id}/periodos/2017/flaz.arrow`;
-  const mdtUrl = `/api/favela/${favela.id}/periodos/2017/mdt.png`;
+  // const pointCloudUrl = `/api/favela/${favela.id}/periodos/2017/flaz.arrow`;
+  // const mdtUrl = `/api/favela/${favela.id}/periodos/2017/mdt.png`;
+  const pointCloudUrl = `/api/favela/${favela.id}/periodos/${period}/flaz.arrow`;
+  const mdtUrl = `/api/favela/${favela.id}/periodos/${period}/mdt.png`;
   const mdtStats = favela.mdt?.stats;
 
 
@@ -140,12 +146,30 @@ export default function PointCloudScene() {
 
 
     <SceneTurnTable enabled={turnTable} sceneRef={sceneRef}>
-      {scene === "pointcloud" && pointCloudUrl && (
+      {/* {scene === "pointcloud" && pointCloudUrl && (
         <PointCloud url={pointCloudUrl} meta={favela} />
       )}
 
       {scene === "mdt" && mdtSize && (
         <MDTScene
+          mdtUrl={mdtUrl}
+          size={mdtSize}
+          displacementScale={favela.mdt_scale ?? 200}
+          heightMin={mdtStats?.min ?? 0}
+          heightMax={mdtStats?.max ?? 1}
+        />
+      )} */}
+      {scene === "pointcloud" && pointCloudUrl && (
+        <PointCloud
+          key={`${favela.id}-${period}`}
+          url={pointCloudUrl}
+          meta={favela}
+        />
+      )}
+
+      {scene === "mdt" && mdtSize && (
+        <MDTScene
+          key={`${favela.id}-${period}`}
           mdtUrl={mdtUrl}
           size={mdtSize}
           displacementScale={favela.mdt_scale ?? 200}
