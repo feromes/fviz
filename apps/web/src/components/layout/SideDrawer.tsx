@@ -84,6 +84,11 @@ export default function SideDrawer() {
   const setColorMode = useColorModeStore((s) => s.setColorMode);
   const period = usePeriodStore((s) => s.period);
   const setPeriod = usePeriodStore((s) => s.setPeriod);
+  const deltaTitle =
+    period === 2024
+      ? "Delta 2020–2024"
+      : "Delta 2017–2020";
+
 
   return (
     <aside
@@ -220,7 +225,7 @@ export default function SideDrawer() {
                   {layer.short}
                 </span>
                 <span className="text-xs text-neutral-600">
-                  {layer.title}
+                  {layer.id === "delta" ? deltaTitle : layer.title}
                 </span>
               </div>
             </button>
