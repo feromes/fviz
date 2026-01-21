@@ -9,6 +9,7 @@ import { loadArrowColumn } from "../../loaders/loadArrowColumn";
 import { hagToColors } from "../../utils/hagToColors";
 import { classificationToColors } from "../../utils/classificationToColors";
 import { vvvToColors } from "../../utils/vvvToColors";
+import { deltaToColors } from "../../utils/deltaToColors";
 
 export function PointCloud({ url, meta, period }) {
   const { camera } = useThree();
@@ -158,6 +159,29 @@ export function PointCloud({ url, meta, period }) {
       }
 
       applyVVV();
+    }
+
+    if (colorMode === "delta") {
+      async function applyDelta() {
+        const delta = await loadArrowColumn(
+          `/api/favela/${meta.id}/periodos/${period}/delta_flaz.arrow`,
+          "delta_colormap"
+        );
+
+        const colors = deltaToColors(
+          delta,
+          meta.delta.min,
+          meta.delta.max
+        );
+
+        geometry.setAttribute(
+          "color",
+          new THREE.BufferAttribute(colors, 3)
+        );
+        geometry.attributes.color.needsUpdate = true;
+      }
+
+      applyDelta();
     }
 
 

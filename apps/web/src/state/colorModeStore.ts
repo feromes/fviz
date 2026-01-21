@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type ColorMode = "elevation" | "hag" | "classification" | "vvv";
+export type ColorMode = "elevation" | "hag" | "classification" | "vvv" | "delta";
 
 type ColorModeState = {
   colorMode: ColorMode;

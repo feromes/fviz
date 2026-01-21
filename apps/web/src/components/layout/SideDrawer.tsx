@@ -71,7 +71,7 @@ const LAYERS: LayerItem[] = [
     short: "Delta MDS",
     title: "Diferença entre levantamentos sucessivos",
     icon: DeltaIcon,
-    enabled: false,
+    enabled: true,
   },
 ];
 
@@ -196,6 +196,13 @@ export default function SideDrawer() {
                   setColorMode("vvv");
                   closeMenu();
                 }
+
+                if (layer.id === "delta") {
+                  setScene("pointcloud", layer.label); // ex: "Delta 2020–2024"
+                  setColorMode("delta");
+                  closeMenu();
+                }
+
               }}
               className={`
                 w-full flex items-center gap-3
