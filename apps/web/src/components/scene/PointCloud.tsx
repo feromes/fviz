@@ -18,8 +18,7 @@ export function PointCloud({ url, meta, period }) {
   const geometryRef = useRef<THREE.BufferGeometry | null>(null);
   const originalColorRef = useRef<Float32Array | null>(null);
   const [geometryVVV, setGeometryVVV] = useState<THREE.BufferGeometry | null>(null);
-
-
+  const [geometryDelta, setGeometryDelta] = useState<THREE.BufferGeometry | null>(null);
 
   useEffect(() => {
     async function run() {
@@ -168,28 +167,78 @@ export function PointCloud({ url, meta, period }) {
           "delta_colormap"
         );
 
-        const colors = deltaToColors(
-          delta,
-          meta.delta.min,
-          meta.delta.max
+        const base = geometryRef.current;
+        if (!base) return;
+
+        const positions =
+          base.getAttribute("position").array as Float32Array;
+
+        const vPositions: number[] = [];
+        const vColors: number[] = [];
+
+        for (let i = 0; i < delta.length; i++) {
+          // ignora zona morta (neutro)
+          // if (delta[i] === 127) continue;
+
+          // posição
+          vPositions.push(
+            positions[i * 3 + 0],
+            positions[i * 3 + 1],
+            positions[i * 3 + 2]
+          );
+
+          // 🔑 NORMALIZA para [0,1]
+          const t = delta[i] / 255;
+
+          const [r, g, b] = deltaToColors(t);
+
+          vColors.push(r, g, b);
+        }
+
+        if (vPositions.length === 0) {
+          setGeometryDelta(null);
+          return;
+        }
+
+        const g = new THREE.BufferGeometry();
+        g.setAttribute(
+          "position",
+          new THREE.Float32BufferAttribute(vPositions, 3)
+        );
+        g.setAttribute(
+          "color",
+          new THREE.Float32BufferAttribute(vColors, 3)
         );
 
-        geometry.setAttribute(
-          "color",
-          new THREE.BufferAttribute(colors, 3)
-        );
-        geometry.attributes.color.needsUpdate = true;
+        setGeometryDelta(g);
       }
 
       applyDelta();
     }
-
 
   }, [colorMode, geometry, period]);
 
 
 
   if (!geometry) return null;
+
+  if (colorMode === "delta") {
+    return (
+      <>
+        {geometryDelta && (
+          <points geometry={geometryDelta}>
+            <pointsMaterial
+              size={6}
+              vertexColors
+              transparent={false}
+              opacity={1.0}
+            />
+            <FitCameraToPoints pointsGeometry={geometryDelta} />
+          </points>
+        )}
+      </>
+    );
+  }
 
   return (
     <>
