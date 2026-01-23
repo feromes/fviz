@@ -1,5 +1,5 @@
 import Logo from "../../assets/icons/Logo.svg";
-
+import { useEffect } from "react";
 import MDSIcon from "../../assets/icons/MDS.svg";
 import MDTIcon from "../../assets/icons/MDT.svg";
 import ClassificacaoIcon from "../../assets/icons/Classificacao.svg";
@@ -18,9 +18,7 @@ import { useSceneStore } from "../../state/sceneStore";
 
 import { useColorModeStore } from "../../state/colorModeStore";
 
-
 export const DRAWER_WIDTH = 320;
-
 
 type LayerItem = {
   id: string;
@@ -88,7 +86,19 @@ export default function SideDrawer() {
     period === 2024
       ? "Delta 2020–2024"
       : "Delta 2017–2020";
+  // const colorMode = useColorModeStore((s) => s.mode);
 
+  const activeLayer = useSceneStore((s) => s.activeLayer);
+  const setActiveLayer = useSceneStore((s) => s.setActiveLayer);
+
+  const isDeltaActive = activeLayer === "delta";
+
+
+  useEffect(() => {
+    if (isDeltaActive && period === 2017) {
+      setPeriod(2020);
+    }
+  }, [isDeltaActive, period, setPeriod]);
 
   return (
     <aside
@@ -125,10 +135,15 @@ export default function SideDrawer() {
           {[2017, 2020, 2024].map((year) => {
             const active = period === year;
 
+            const enabled = !(isDeltaActive && year === 2017);
+
             return (
               <button
                 key={year}
+                disabled={!enabled}
                 onClick={() => {
+                  if (!enabled) return;
+
                   setPeriod(year as 2017 | 2020 | 2024);
                   closeMenu();
                 }}
@@ -141,6 +156,11 @@ export default function SideDrawer() {
                     active
                       ? "bg-white shadow-sm"
                       : "bg-neutral-200 hover:bg-neutral-300"
+                  }
+                  ${
+                    !enabled
+                      ? "opacity-40 cursor-not-allowed"
+                      : ""
                   }
                 `}
               >
@@ -159,7 +179,7 @@ export default function SideDrawer() {
       {/* LISTA DE LAYERS */}
       <nav className="p-4 space-y-2">
       {LAYERS.map((layer) => {
-        const isActive = scene === layer.id;
+        const isActive = activeLayer === layer.id;
 
         const enabled =
           layer.id !== "delta" || period !== 2017;
@@ -172,35 +192,41 @@ export default function SideDrawer() {
                 if (!enabled) return;
 
                 if (layer.id === "mdt") {
+                  setActiveLayer("mdt");
                   setScene("mdt", "MDT - Modelo Digital de Terreno");
                   closeMenu();
                 }
 
                 if (layer.id === "mds") {
+                  setActiveLayer("mds");
                   setScene("pointcloud", "MDS - Modelo Digital de Superfície");
                   setColorMode("elevation"); // MDS = cor por elevação (por enquanto)
                   closeMenu();
                 }
 
                 if (layer.id === "hag") {
+                  setActiveLayer("hag");
                   setScene("pointcloud", "ARS - Altura em relação ao solo");    // continua sendo pointcloud
                   setColorMode("hag");       // só muda a “tinta”
                   toggleMenu();
                 }
 
                 if (layer.id === "classificacao") {
+                  setActiveLayer("classificacao");
                   setScene("pointcloud", "Classificação ASPRS");
                   setColorMode("classification");
                   closeMenu();
                 }
 
                 if (layer.id === "footpath") {
+                  setActiveLayer("footpath");
                   setScene("pointcloud", "Vielas, Vias e Vazios");
                   setColorMode("vvv");
                   closeMenu();
                 }
 
                 if (layer.id === "delta") {
+                  setActiveLayer("delta");
                   setScene("pointcloud", deltaTitle);
                   setColorMode("delta");
                   closeMenu();
