@@ -158,15 +158,18 @@ export default function SideDrawer() {
 
       {/* LISTA DE LAYERS */}
       <nav className="p-4 space-y-2">
-        {LAYERS.map((layer) => {
-          const isActive = scene === layer.id;
+      {LAYERS.map((layer) => {
+        const isActive = scene === layer.id;
+
+        const enabled =
+          layer.id !== "delta" || period !== 2017;
 
           return (
             <button
               key={layer.id}
-              disabled={!layer.enabled}
+              disabled={!enabled}
               onClick={() => {
-                if (!layer.enabled) return;
+                if (!enabled) return;
 
                 if (layer.id === "mdt") {
                   setScene("mdt", "MDT - Modelo Digital de Terreno");
@@ -198,7 +201,7 @@ export default function SideDrawer() {
                 }
 
                 if (layer.id === "delta") {
-                  setScene("pointcloud", layer.label); // ex: "Delta 2020–2024"
+                  setScene("pointcloud", deltaTitle);
                   setColorMode("delta");
                   closeMenu();
                 }
@@ -215,7 +218,7 @@ export default function SideDrawer() {
                     : "hover:bg-neutral-200"
                 }
                 ${
-                  !layer.enabled
+                  !enabled
                     ? "opacity-40 cursor-not-allowed"
                     : "cursor-pointer"
                 }
